@@ -1,0 +1,322 @@
+* [33mdb2964f ([1;36mHEAD[m[33m, [1;31morigin/develop[m[33m, [1;32mdevelop[m[33m)[m fixed some errors in the last commit, just spelling
+* [33m465d27b[m for targets-dicts without ra and dec, we convert the mount's form jnow
+* [33mdb43012[m takeImage now uses a target-dictionary arguement
+* [33ma81c592[m using coord prop version of cdk700.acquiretarget in control.py
+* [33mf56b06a[m coord propagation checked, starting new target dic standard
+* [33m0e4d333[m fixed schedule copy in endNight
+*   [33m6d7adcc[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[32m|[m[33m\[m  
+[32m|[m * [33mab029cf[m just catching up. deleted an empty line
+* [33m|[m [33m6b4c5d6[m lots of work on autofocus, new autofocus routine in the works, more robust in cdk700
+[33m|[m[33m/[m  
+* [33m50343d1[m add apc config files
+* [33m56cf860[m add pdu.py
+* [33mc6c7339[m little mistake, easier to edit on here
+* [33m905bc70[m temp push while testing new server code
+* [33mbe5e8c2[m added some to cdk.inPosition(), partial stuff creation of new autofocus routine
+* [33m582047f[m updates to autofocus, now filters by ellipticity. also added dome control catch for if the thread dies
+* [33ma44480e[m updated cdk700.inPostion() to include focus movement, included it in autofocus. also some other minor things
+* [33me9614bf[m port selection in takeImage(), some changes to autofocus, some other cleanup
+* [33md595b71[m More autofocus additions, now creates designated record files and can plot from these records.
+* [33md50b93f[m Autofocus up and actually running, worked a few times but keep an eye on it. Also a few notes in cdk700 about homing loop we get stuck in
+* [33m6d77d36[m minor fixes for last commit in autofocus
+* [33m5bf78ab[m Working on autofocus, should be just about good to be implemented
+* [33ma288955[m changed t2 camera setpoint to 0 C
+* [33m454e850[m adding newauto for autofocus, some updates in control
+* [33m16ffcd3[m put MAD->std->sdom for fitting the quadratic in autofocus routine
+*   [33m6094dba[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[34m|[m[35m\[m  
+[34m|[m * [33m9f61a79[m add required registry key changes to dependencies
+* [35m|[m [33m6737cf2[m more robust recovery; startup sequence, better logging
+[35m|[m[35m/[m  
+* [33m6de9dc6[m overhaul of image and image_server recovery functions
+*   [33m31cc0a5[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[36m|[m[1;31m\[m  
+[36m|[m * [33m17a3d1f[m reboot now disconnects from telescope, camera and exits maxim, PWI cleanly
+[36m|[m * [33ma8e0057[m messing with robustness, not an important commit
+* [1;31m|[m [33m8e7471a[m various fixes
+[1;31m|[m[1;31m/[m  
+* [33m40b947f[m lots of updates, mostly increasing robustness
+* [33m23eccea[m fixed homing functions
+* [33md644060[m PWI 2.2.0.11 enables scripted homing and fixes autofocus bug
+* [33m1821d82[m typo in email
+* [33md184cb6[m change reboot message; now knows about daily reboot
+* [33m24cb9dd[m modify initialization sequence (fix autofocus?)
+*   [33ma3dac83[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m31a4712[m Added some troubleshooting for moving the i2stage, also fixed up some server side stuff
+[1;32m|[m * [33m5f8a317[m fixed some issues with kiwispec with loggers occuring in new setup, i2stage now moved in thread
+* [1;33m|[m [33m62958b6[m working on autofocus command
+[1;33m|[m[1;33m/[m  
+* [33mfc3c4fc[m now it will be open if it hasn't rained in the last hour and all other checks pass
+*   [33m008bbee[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [33me1bf699[m add shutdown abort bat file
+[1;34m|[m * [33m1cac56c[m add daily reboot script
+* [1;35m|[m [33mca31a22[m added a few header keywords
+[1;35m|[m[1;35m/[m  
+* [33m547daae[m improved/clarified logging
+* [33m6d13c79[m open and close now check for estop and email if present
+* [33mb5b4f9e[m improved aqawan logging
+* [33m15fa5cb[m fixed data backup
+* [33m39cdaf3[m forgot to uncomment sleep time in observing script
+*   [33m4d2c703[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[1;36m|[m[31m\[m  
+[1;36m|[m * [33m96d843c[m starting to implement red
+* [31m|[m [33m36d5a04[m fixed integer header values
+* [31m|[m [33m2484f1c[m Added imager error logging, commented out mail.send
+[31m|[m[31m/[m  
+* [33mec276f8[m bug fixes for weather timeout, image server connection lost, aqawan numbers,
+* [33mc04908e[m fixed aqawan opening stutter, also set_data_path for imagers
+* [33m08edca8[m don't use IDLE to edit, makes tabs as four spaces, fucks with stuff
+* [33m4c0ff50[m fixed compress_data () for the imagers, now starts it in new thread
+*   [33m8d10dc8[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[32m|[m[33m\[m  
+[32m|[m * [33me692a4c[m revert to enter, click() still not reliable
+[32m|[m * [33m36843cc[m the ok button actual works for homing, so we'll use it.
+* [33m|[m [33m92a6ee0[m compress data fix, mearth weather changes, PA math error fix, dome.isOpen declared in init, maybe more?
+[33m|[m[33m/[m  
+* [33m7bf9d66[m removed default trackingOn for cdk initialize, added email event for fail of homing
+* [33m6f56a77[m edited telcom_server just a wee bit, also following some testing.
+* [33m8dbe50d[m fixed data path
+* [33md71f6f1[m updated telescope home function to be a bit more robust with pywinauto. added an iteration counter too
+*   [33mbfd7b23[m Merge branch 'develop' of https://github.com/MinervaCollaboration/minerva-control into develop
+[34m|[m[35m\[m  
+[34m|[m * [33m89a62de[m update config for loaner apogee
+* [35m|[m [33m916cb2c[m fix log locations
+[35m|[m[35m/[m  
+* [33m4d11b6e[m Using all three cloud sensors at Mt Hopkins in a tiered fashion
+* [33m74b187e[m Working on getting spectrograph server up and running, running into a few issues with the motor set up. will do more testing
+* [33m541d281[m Reworked and tested all new telescope functions in control.py
+* [33m48945a8[m Edited some weather checks to be able to get main.py to do a test run.
+* [33mb0bacb8[m Modified so most equipment is on the server side for the spectrograph
+* [33m2cd3136[m Moved lamp functions and i2stage functions into spectrograph_server
+* [33mb7a84bf[m Did a revert on cdk700.py, changed a few things in main-esqu programs
+*   [33m317d5bd[m resolved merge conflicts
+[36m|[m[1;31m\[m  
+[36m|[m * [33m077fde7[m ignore .dat files
+[36m|[m * [33me5601e9[m PDU updates incorporated, dictionaries for outlets too.
+[36m|[m * [33m17a42d2[m Added proper motion, parallax correction to aquireTarget in cdk700. NOT IMPLEMENTED
+[36m|[m * [33mb48270d[m changed control.telescope command structure to accomodate lists containing number of telescopes to command
+[36m|[m * [33m9dbf9ea[m sepc_calib function in control.py, changed sometime out things that can be changed back, but should be irrelevant no.
+[36m|[m * [33m36e3201[m spec_equipment_check in takeSpectrum, put closing procedures in inits for spec and spec server, tested
+[36m|[m * [33mba9bd98[m reworked com.coms in spec_server, tested, EODay
+[36m|[m * [33m06eb187[m Updated spec_equip_test, did some function renaming, a few minor things
+[36m|[m * [33m4e09851[m Began exposure layouts, reformed iodine stage movement
+[36m|[m * [33me1c9328[m Talking to cellheater, stage, lamps, expmeter logging
+[36m|[m * [33m84a7288[m pt100.py now works
+[36m|[m * [33m41a9bd8[m takeSpectrum now takes a spectrum
+[36m|[m * [33m2d51339[m spectrograph code updates
+[36m|[m * [33mb8d5b70[m merging spectrograph software into develop branch
+* [1;31m|[m [33md56ca0e[m write telescope status
+[1;31m|[m[1;31m/[m  
+* [33mf4d147c[m disable homing
+* [33m1ab736c[m fixed startup script
+* [33m370ac85[m update .gitignore
+* [33m31eb412[m add additional files, update .gitignore
+* [33mf4d1b0d[m change directory names
+* [33md940db9[m improved home button clicking
+* [33m6fd2f95[m get_status err handling, raise error on connect
+* [33mdb17c88[m syncing with copy on main
+* [33m7fa597b[m syncing with dependencies
+* [33m5c082a3[m initial commit from minervaMain
+* [33md78b07f[m initial commit from minervaMain
+* [33m3b2c14e[m initial commit of array control
+* [33m0f2039c[m initial git commit for minerva-control
+* [33m79dcb5d ([1;31morigin/master[m[33m, [1;31morigin/HEAD[m[33m)[m additions for spectrograph code
+* [33m3ad9248 ([1;32mmaster[m[33m)[m start telcom.py on reboot
+* [33mc913ca1[m more robust telescope recovery
+* [33madbc92a[m turn off tracking while waiting
+* [33m2d43a7e[m another bug in deltapos
+* [33m2d80700[m radians not deg...
+* [33m1031c47[m improvements to telescope recovery
+* [33m59faa81[m observing report now includes weather
+* [33mc85278b[m disable auto-restart
+* [33m5c53ef9[m create observing report at end of night
+* [33m47fc925[m wrap getPA in try/except
+* [33m52d9f91[m astrometry.py WCS solves all old files
+* [33m155045c[m now updates header with WCS, deletes extra files
+* [33mf82dd12[m add directions for pointing model, compressAll func
+* [33m1da79b6[m fix autofocus recover, increase apogee setpoint to -10
+* [33m360bbf1[m add vacuum gauge class
+* [33m2bbf55a[m create serial port class
+* [33m369f214[m spelling error fixed
+* [33m66f5d68[m syntax error in takeImage fixed
+* [33m672a07e[m hang on readout fixed?
+* [33maa33b0c[m add timeout, recovery to autofocus
+* [33made3e6e[m fix bug in AlwaysUpError handling
+* [33m34491d6[m add PC name to JSON alert
+* [33mf96ecfd[m more explicit email about rotator
+* [33m6d876ac[m more explicit directions for power outage recovery
+* [33mfc1916b[m dynapower.py now works
+* [33m3be8ee5[m autofocus now slews to position
+* [33m000481e[m dynapower code written (untested)
+* [33m76d83cb[m security update
+* [33mb4e69ea[m commit of spectrograph components
+* [33m8741a85[m global exception for scope telemetry
+* [33md547416[m remove redundant error checking for scope telemetry
+* [33mfc0def4[m remove redundant calculation of TELRA/TELDEC
+* [33me2ab6fe[m add moon header keywords
+* [33m4007b2c[m remove offset-based guider alert
+* [33m7158619[m fixed TELDEC header keyword
+* [33mf352c63[m error in JSON file upgraded to serious alert
+* [33m5cad4df[m improve logging for autofocus
+* [33m988031a[m move astrometry to takeImage
+* [33m043ab5f[m now emails/recovers on reboot (requires scheduled task)
+* [33m71fef45[m integrate pointing/rotator check with astrometry
+* [33mc713b08[m timeout/recovery for camera read, validate schedule
+* [33md3effd1[m plate solve images in the background
+* [33m4b1e17e[m fix platescale for apogee
+* [33m20cad6d[m bug in pa screwed up guiding
+* [33m68d25f4[m added getPA, based on astrometry.net
+* [33mcc263e1[m imager power cycles on failure to connect
+* [33m367c2bc[m powerswitch class now works
+* [33m777d574[m return fail instead of set_trace in aqawan
+* [33m45aad48[m add check for aqawan in manual mode
+* [33m2b742ac[m bug fixes for copying logs, cooling not required
+* [33mc1f4cb6[m bug fixes for end of night starting main.py
+* [33m471f488[m fix rotator mailsent
+* [33ma98b131[m fix indent error in copying logs/schedule
+* [33mf577dc8[m change info to debug in aqawan status
+* [33m3dbd0b6[m stub to copy log, schedule to data dir
+* [33mb1f120b[m fix rotator mailsent
+* [33m4ef5761[m put telescope name in header
+* [33m5a083f3[m fix bug in status logging
+* [33mddaafb9[m added more logging to diagnose aqawan close failure
+* [33mbc7b96b[m added check for aqawan status keys
+* [33m9dcb5db[m remove smtplib from dependencies (preinstalled)
+* [33m7bd9718[m email alerts for common/critical errors
+* [33me6ef26c[m data now saved to D drive
+* [33me89ed97[m log message for dark/bias wait clearer
+* [33mf0784a4[m increase telescope slew timeout to 6 min
+* [33m30f97d5[m fixed bug in dark timing
+* [33ma3a5df9[m debug indents...
+* [33m0c09bd1[m wait to take biases/darks, skip if past twilight
+* [33m5464657[m increase camera cooling timeout, change bias on c4
+* [33m9c072cd[m Only send heartbeats to aqawan when it's ok to open
+* [33mdc41666[m Fixed bug in horizon check
+* [33m0a5d37c[m Added horizon check for targets
+* [33m648fd67[m images must be N up, E left
+* [33m2e0a5ff[m Fixed bug in guiding threshhold
+* [33mb0dcb2a[m added PWI 2.2.0.9
+* [33mbfd9ca6[m update gitignore
+* [33m3219aa5[m Delete weather_status
+* [33m69df4ca[m Delete lastClose.txt
+* [33med2e7fa[m Delete #sunOverride.txt
+* [33m0934553[m Delete #disableGuiding.txt
+* [33mdc62077[m Delete __init__.pyc
+* [33m44ec00b[m Delete focus.txt
+* [33m4c31ee3[m update gitignore
+* [33mf713bd7[m Added the CalibEndInfo line back in
+* [33m30d51e5[m update gitignore
+*   [33m783928c[m Merge branch 'master' of https://github.com/MinervaCollaboration/minerva-control
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33me982871[m Merge remote-tracking branch 'origin/master'
+* [1;34m|[m [33m4251271[m imager.ini corrections
+[1;34m|[m[1;34m/[m  
+*   [33m52fa7fa[m Revert "ignore focus.txt"
+[1;35m|[m[1;36m\[m  
+[1;35m|[m *   [33m598d5f7[m Merge remote-tracking branch 'origin/master'
+[1;35m|[m [31m|[m[32m\[m  
+[1;35m|[m * [32m|[m [33ma011950[m ignore focus.txt and .pyc files
+* [32m|[m [32m|[m [33m2df1cba[m ignore focus.txt
+* [32m|[m [32m|[m [33mcc529a8[m ignore focus.txt
+* [32m|[m [32m|[m [33mf006b86[m ignore focus.txt
+[32m|[m [32m|[m[32m/[m  
+[32m|[m[32m/[m[32m|[m   
+* [32m|[m   [33mfbcc54a[m Merge branch 'master' of https://github.com/MinervaCollaboration/minerva-control
+[33m|[m[32m\[m [32m\[m  
+[33m|[m [32m|[m[32m/[m  
+[33m|[m *   [33m850712e[m Merge branch 'master' of https://github.com/MinervaCollaboration/minerva-control
+[33m|[m [35m|[m[36m\[m  
+[33m|[m * [36m|[m [33ma925bbc[m Update imager (filter) configs
+* [36m|[m [36m|[m [33m8b116a2[m imager.ini updates
+[36m|[m [36m|[m[36m/[m  
+[36m|[m[36m/[m[36m|[m   
+* [36m|[m [33m320c570[m Update gitignore to exclude .pyc files
+* [36m|[m [33m7afd1e1[m Added aqawan 1 to site.ini
+[36m|[m[36m/[m  
+* [33m1a36756[m Fixed imager.ini
+* [33mc1beaea[m Debugging for move to Mt. Hopkins
+* [33m1703042[m gitignore
+* [33m9a2115f[m Debugging
+* [33m4a96fe8[m Changed flats to only slew once
+* [33m60da67a[m Added some try/except's to deal with header errors
+* [33m88c1a60[m Added a way to do autofocus in the target list
+* [33mfde8141[m implement guiding, various improvements
+* [33m8de5f1e[m pa now wired; pwi now starts automatically
+* [33mce68ebc[m logs now in UTC, suppress debug on screen
+* [33m95c84f3[m Added second header line
+* [33m4ba0234[m Fixed major bug, now doesn't open in bad weather
+* [33meefb2ef[m Reversed flat field order, fixed derotator bug
+* [33ma80f7bb[m Fixed sunalt big, also parks scope before dome
+*   [33m5bd35b9[m Merge branch 'master' of https://github.com/MinervaCollaboration/minerva-control
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m14ca183[m added dependencies for guiding
+* [1;32m|[m [33m5046e24[m Changed sunrise and sunset to sunalt=0
+[1;32m|[m[1;32m/[m  
+* [33m56894a4[m Added an "nflat" to the calib header
+* [33m0a86c89[m Added calibration header line to target lists
+* [33m5b18706[m added VC in dependencies
+* [33m7517da7[m changes to ini files
+* [33mefd3258[m update pipinstall.bat
+*   [33meef42c4[m added HoldDomeOpen.py
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33mfa3df0e[m removed local files
+[1;33m|[m *   [33med4d178[m Merge branch 'master' of https://github.com/MinervaCollaboration/minerva-control
+[1;33m|[m [1;35m|[m[1;36m\[m  
+[1;33m|[m * [1;36m\[m   [33m5346dba[m Merge remote-tracking branch 'origin/develop'
+[1;33m|[m [31m|[m[32m\[m [1;36m\[m  
+[1;33m|[m [31m|[m * [1;36m|[m [33mc99ac76[m OO code ready for merge
+[1;33m|[m [31m|[m * [1;36m|[m [33m8a860d9[m ready for on-sky testing
+[1;33m|[m [31m|[m * [1;36m|[m [33mf48c274[m Significant progress
+[1;33m|[m [31m|[m * [1;36m|[m [33mede3d44[m porting functions from aqawan.py into classes
+[1;33m|[m [31m|[m * [1;36m|[m [33mbd09b4a[m add rough WCS solution based on telescope pointing
+[1;33m|[m [31m|[m * [1;36m|[m [33ma924503[m added logic to handling open/close during the night
+[1;33m|[m [31m|[m * [1;36m|[m [33m2192a95[m added more header keywords
+[1;33m|[m [31m|[m * [1;36m|[m [33m6bd0378[m Added many header keywords when using takeImage()
+[1;33m|[m [31m|[m * [1;36m|[m [33m2fbc89c[m Add CFITSIO, now rice compress data at end of night
+[1;33m|[m [31m|[m * [1;36m|[m [33m5b6914e[m Added cloud monitoring
+[1;33m|[m [31m|[m * [1;36m|[m [33m6829544[m target list, doScience more general, bug fixes
+[1;33m|[m [31m|[m * [1;36m|[m [33m56b291c[m bug fixes
+[1;33m|[m [31m|[m * [1;36m|[m [33m2aa0640[m now reads from a target list
+[1;33m|[m [31m|[m * [1;36m|[m [33meb09ca2[m Debugged doSkyFlat.py
+[1;33m|[m [31m|[m * [1;36m|[m [33mb0d91cc[m Update aqawan.py
+[1;33m|[m [31m|[m * [1;36m|[m [33m9209d37[m Update targets.list
+[1;33m|[m [31m|[m * [1;36m|[m [33me53dbe8[m Create targets.list
+[1;33m|[m [31m|[m * [1;36m|[m [33m9fe0ed5[m Update aqawan.py
+[1;33m|[m [31m|[m * [1;36m|[m [33mc416035[m bug fixes
+[1;33m|[m [31m|[m * [1;36m|[m [33mf9b39ea[m some development on minerva classes
+[1;33m|[m [31m|[m * [1;36m|[m [33m4d9b383[m overall package structure
+[1;33m|[m [31m|[m * [1;36m|[m [33m0f9c5ba[m some initial changes
+[1;33m|[m [31m|[m * [1;36m|[m [33m615648c[m class directory added
+* [31m|[m [32m|[m [1;36m|[m [33me5bd15d[m file cleanup
+* [31m|[m [32m|[m [1;36m|[m [33md63bb8c[m adding dependencies, file cleanup
+* [31m|[m [32m|[m [1;36m|[m [33m9951922[m Added dependencies to repo, pip batch script
+[1;36m|[m [31m|[m[1;36m_[m[32m|[m[1;36m/[m  
+[1;36m|[m[1;36m/[m[31m|[m [32m|[m   
+* [31m|[m [32m|[m [33m585a646[m add rough WCS solution based on telescope pointing
+* [31m|[m [32m|[m [33mc4e54c4[m added logic to handling open/close during the night
+* [31m|[m [32m|[m [33m57297ba[m added more header keywords
+* [31m|[m [32m|[m [33m5eb330c[m Added many header keywords when using takeImage()
+* [31m|[m [32m|[m [33m9efa44b[m Add CFITSIO, now rice compress data at end of night
+* [31m|[m [32m|[m [33mafc3c89[m Added cloud monitoring
+[31m|[m[31m/[m [32m/[m  
+* [32m|[m [33m8de9bbd[m target list, doScience more general, bug fixes
+* [32m|[m [33m739eac7[m bug fixes
+* [32m|[m [33m9ad0af2[m now reads from a target list
+* [32m|[m [33m740d5b8[m Debugged doSkyFlat.py
+* [32m|[m [33m077cb5f[m Update aqawan.py
+* [32m|[m [33m32c11dc[m Update targets.list
+* [32m|[m [33m31ddee8[m Create targets.list
+* [32m|[m [33m9e5efbc[m Update aqawan.py
+* [32m|[m [33md9dcf7c[m bug fixes
+[32m|[m[32m/[m  
+* [33m41215a3[m Now aqawan.py (sort of) completes a scripted night
+* [33m4106e11[m Basic (untested) code for a scripted night
+* [33md3da5e7[m added logging, camera connection (requires testing)
+* [33m83e391d[m close telnet session
+* [33me75065d[m Fixed aqawan code
+* [33me3cb4c3[m Started aqawan branch; added untested code
+* [33m9c2d99c[m Added DEMONEX Code
+* [33ma085577[m recommit on github

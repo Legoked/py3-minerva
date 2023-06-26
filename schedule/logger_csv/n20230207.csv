@@ -1,0 +1,4 @@
+Time,Object,Exposure Time,File Name,Telescope 1,Telescope 2,Telescope 3,Telescope 4,Spectra Obtained,Total Exposure Time (hrs),Observable Hours (hrs)
+03:48:29,TOI1588,1800.0,n20230207.TOI1588.0014.fits,on,on,on,on,3,1.32,11.36
+05:01:44,HR2209,1800.0,n20230207.HR2209.0015.fits,on,on,on,on,3,1.32,11.36
+12:50:46,HR6629,1141.0,n20230207.HR6629.0016.fits,on,on,on,on,3,1.32,11.36

@@ -1,0 +1,3 @@
+{"nbias": 10, "ndark": 10, "nflat": 10, "darkexptime": [30.0], "flatFilters": ["zp"], "WaitForMorning": true}
+{"nbiasEnd": 10, "ndarkEnd": 10, "nflatEnd": 10}
+{"name": "KELT2", "ra": 22.0527777, "dec": 18.88416666, "starttime": "2015-10-26 06:30:00", "endtime": "2015-10-26 12:00:00", "filter": ["zp"], "num": [999999], "exptime": [30.0], "defocus": 2.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}

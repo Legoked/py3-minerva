@@ -1,0 +1,15 @@
+#   1 NUMBER          Running object number
+#   2 FLUXERR_ISO     RMS error for isophotal flux                    [count]
+#   3 FLUX_RADIUS     Fraction-of-light radii                         [pixel]
+#   4 X_IMAGE         Object position along x                         [pixel]
+#   5 Y_IMAGE         Object position along y                         [pixel]
+#   6 FLAGS           Extraction flags
+         1            0      2.699      0.000      0.000   0
+         2            0      2.024      0.000      0.000  16
+         3            0      2.898      0.000      0.000   0
+         4            0      2.473      0.000      0.000   0
+         5            0      3.587      0.000      0.000   0
+         6            0      3.416      0.000      0.000   0
+         7            0      2.330      0.000      0.000   0
+         8            0      3.427      0.000      0.000   0
+         9            0      2.106      0.000      0.000   0

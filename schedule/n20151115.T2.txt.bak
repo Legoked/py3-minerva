@@ -1,0 +1,3 @@
+{"nbias": 9, "ndark": 9, "nflat": 11, "darkexptime": [36.0], "flatFilters": ["rp"], "WaitForMorning": false}
+{"nbiasEnd": 10, "ndarkEnd": 10, "nflatEnd": 10}
+{"name": "KC20C22787","ra": 10.2915884361,"dec": 68.8059814167,"starttime": "2015-11-15 05:54:27","endtime": "2015-11-15 11:40:03","filter": ["rp"],"num": [9999],"exptime": [36.0],"defocus": 3.0,"selfguide": true,"guide": false,"cycleFilter": true,"positionAngle": 0.0,"priority": 10.0,"ingressTime": "06:39:27","egressTime": "10:55:03"}

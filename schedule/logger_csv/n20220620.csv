@@ -1,0 +1,5 @@
+Time,Object,Exposure Time,File Name,Telescope 1,Telescope 2,Telescope 3,Telescope 4,Spectra Obtained,Total Exposure Time (hrs),Observable Hours (hrs)
+03:44:19,TIC349488688,1800.0,20220620.TIC349488688.0014.fits,on,on,on,on,4,1.5,7.7
+04:24:36,TOI1151_01,1200.0,20220620.TOI1151_01.0015.fits,on,on,on,on,4,1.5,7.7
+04:45:23,TOI1151_01,1200.0,20220620.TOI1151_01.0016.fits,on,on,on,on,4,1.5,7.7
+05:06:07,TOI1151_01,1200.0,20220620.TOI1151_01.0017.fits,on,on,on,on,4,1.5,7.7

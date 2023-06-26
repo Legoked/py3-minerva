@@ -1,0 +1,4 @@
+{"nbias": 9, "ndark": 9, "nflat": 11, "darkexptime": [35.0,60.0], "flatFilters": ["ip","V"], "WaitForMorning": false}
+{"nbiasEnd": 10, "ndarkEnd": 10, "nflatEnd": 10}
+{"name": "KC16C030463","ra": 23.6753117222,"dec": 61.5779908333,"starttime": "2015-11-24 03:46:03","endtime": "2015-11-24 10:14:51","filter": ["ip"],"num": [9999],"exptime": [35.0],"defocus": 1.0,"selfguide": true,"guide": false,"cycleFilter": true,"positionAngle": 0.0,"priority": 6.0,"ingressTime": "04:31:03","egressTime": "09:29:51"}
+{"name": "EPIC2015", "ra": 11.80933611, "dec": 1.483138888, "starttime": "2015-11-24 10:15:00", "endtime": "2015-12-31 13:00:00", "filter": ["V"], "num":[9999], "exptime":[60.0],"defocus": 0.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}

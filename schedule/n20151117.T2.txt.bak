@@ -1,0 +1,3 @@
+{"nbias": 9, "ndark": 9, "nflat": 7, "darkexptime": [60.0], "flatFilters": ["zp"], "WaitForMorning": false}
+{"nbiasEnd": 9, "ndarkEnd": 9, "nflatEnd": 7}
+{"name": "WASP-12b", "ra": 6.50910833, "dec": 29.6722, "starttime": "2015-11-17 07:26:00", "endtime": "2015-11-17 12:57:00", "filter": ["zp"], "num": [9999], "exptime": [60.0], "defocus": 0.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}

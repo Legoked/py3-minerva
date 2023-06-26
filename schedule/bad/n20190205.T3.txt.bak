@@ -1,0 +1,6 @@
+{"nbias": 5, "ndark": 5, "nflat": 5, "darkexptime": [12.0], "flatFilters": ["V"], "WaitForMorning": false}
+{"nbiasEnd": 5, "ndarkEnd": 5, "nflatEnd": 5}
+{"name": "autofocus","ra": 5.477566667,"dec": 42.43772222,"starttime": "2019-01-01 01:00:00","endtime": "2019-12-31 12:30:00","filter": ["V"],"num": [1],"exptime": [12.0],"defocus": 0.0,"selfguide": true,"guide": false,"cycleFilter": false,"positionAngle": 0.0}
+{"name": "SY_AUR","ra": 5.210897222,"dec": 42.83178333,"starttime": "2019-01-01 01:00:00","endtime": "2019-12-31 12:30:00","filter": ["V"],"num": [3],"exptime": [12.0],"defocus": 1.0,"selfguide": true,"guide": false,"cycleFilter": false,"positionAngle": 0.0}
+{"name": "Y_AUR","ra": 5.477566667,"dec": 42.43772222,"starttime": "2019-01-01 01:00:00","endtime": "2019-12-31 12:30:00","filter": ["V"],"num": [3],"exptime": [12.0],"defocus": 1.0,"selfguide": true,"guide": false,"cycleFilter": false,"postionAngle": 0.0}
+{"name": "AO_AUR","ra": 5.795847222,"dec": 32.01464444,"starttime": "2019-01-01 01:00:00","endtime": "2019-12-31 12:30:00","filter": ["V"],"num": [3],"exptime": [12.0],"defocus": 0.0,"selfguide": true,"guide": false,"cycleFilter": false,"positionAngle": 0.0}

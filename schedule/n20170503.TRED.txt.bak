@@ -1,0 +1,6 @@
+{"nbias": 10, "ndark": 10, "nflat": 10, "darkexptime": [120.0], "flatFilters": ['zp'], "WaitForMorning": true}
+{"nbiasEnd": 10, "ndarkEnd": 10, "nflatEnd": 10}
+{"name": "autofocus", "ra": 10.3267447222, "dec": 19.870036, "starttime": "2016-05-02 07:50:00", "endtime": "2018-05-02 08:00:00", "filter": ['zp'], "num": [9999], "exptime": [120], "defocus": 0.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}
+{"name": "ADLeo", "ra": 10.3267447222, "dec": 19.870036, "starttime": "2016-05-02 07:50:00", "endtime": "2018-05-02 08:00:00", "filter": ['zp'], "num": [9999], "exptime": [120], "defocus": 0.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}
+{"name": "barnardstar", "ra": 17.963471675, "dec": 4.693391, "starttime": "2017-05-02 08:00:01", "endtime": "2018-05-02 08:00:00", "filter": ['zp'], "num": [9999], "exptime": [120], "defocus": 0.0, "selfguide": true, "guide": false, "cycleFilter": true, "positionAngle": 0.0}
+

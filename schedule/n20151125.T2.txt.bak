@@ -1,0 +1,4 @@
+{"nbias": 9, "ndark": 9, "nflat": 11, "darkexptime": [33.0,34.0], "flatFilters": ["ip"], "WaitForMorning": false}
+{"nbiasEnd": 10, "ndarkEnd": 10, "nflatEnd": 10}
+{"name": "KC02C04507","ra": 1.51710422222,"dec": 23.4150658333,"starttime": "2015-11-25 03:18:30","endtime": "2015-11-25 07:11:18","filter": ["ip"],"num": [9999],"exptime": [33.0],"defocus": 1.0,"selfguide": true,"guide": false,"cycleFilter": true,"positionAngle": 0.0,"priority": 8.0,"ingressTime": "04:03:30","egressTime": "06:26:18"}
+{"name": "KJ06C017903","ra": 7.26858333333,"dec": -0.0353611111111,"starttime": "2015-11-25 07:37:06","endtime": "2015-11-25 13:23:25","filter": ["ip"],"num": [9999],"exptime": [34.0],"defocus": 2.0,"selfguide": true,"guide": false,"cycleFilter": true,"positionAngle": 0.0,"priority": 6.0,"ingressTime": "08:22:06","egressTime": "12:38:25"}
