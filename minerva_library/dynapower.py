@@ -2,7 +2,7 @@
 create class object by powerswitch(num), where num specify which powerswitch
 test program creates powerswitch(1) object and send keyboard commands'''
 
-import time, urllib2, ipdb, datetime, logging, requests
+import time, ipdb, datetime, logging, requests
 import selenium
 from selenium import webdriver
 from configobj import ConfigObj
@@ -90,7 +90,7 @@ class dynapower:
             
         #DEBUG        
         for key in self.status.keys():
-            print key,self.status[key],type(self.status[key])
+            print(key,self.status[key],type(self.status[key]))
 
 
     def send(self,url):
@@ -140,7 +140,7 @@ class dynapower:
         
 
 if __name__ == '__main__':
-    ipdb.set_trace()
+    # ipdb.set_trace()
     d2 = dynapower('n20150824',base = 'C:/minerva-control/',configfile='dynapower_2.ini',browser=True)
     
     

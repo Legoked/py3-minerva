@@ -19,11 +19,9 @@ import dynapower
 import ipdb
 import utils
 
-# spectrograph control class, control all spectrograph hardware
+# spectrograph control class, control all spectrograph hardware ..... to follow pep8, must capitalize class names
 class spectrograph:
-
 	def __init__(self,config, base ='', red=False, directory=None):
-
 		self.lock = threading.Lock()
 		self.si_lock = threading.Lock()
 		self.config_file = config
@@ -39,11 +37,11 @@ class spectrograph:
 		self.status_lock = threading.RLock()
 		self.file_name = ''
 
-		if directory == None:
-                       if red: self.directory = 'directory_red.txt'
-                       else: self.directory = 'directory.txt'
-                else: self.directory=directory
-		
+		if directory is None:
+			self.directory = 'directory_red.txt' if red else 'directory.txt'
+		else:
+			self.directory = directory
+
 		# configures camera
 		self.initialize_si()
 
@@ -59,26 +57,27 @@ class spectrograph:
 			self.port = int(config['SERVER_PORT'])
 			self.camera_port = int(config['CAMERA_PORT'])
 			self.logger_name = config['LOGNAME']
-			self.exptypes = {'Template':1,
-                                         'SlitFlat':1,
-                                         'Arc':1,
-                                         'FiberArc': 1,
-                                         'FiberFlat':1,
-                                         'Bias':0,
-                                         'Dark':0,
-                                        }
+			self.exptypes = {
+				'Template':1,
+                'SlitFlat':1,
+                'Arc':1,
+                'FiberArc': 1,
+                'FiberFlat':1,
+                'Bias':0,
+                'Dark':0,
+            }
 			self.si_settings = config['SI_SETTINGS']
 
 			# reset the night at 10 am local
 			today = datetime.datetime.utcnow()
-                        if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
-                                today = today + datetime.timedelta(days=1)
-                        #self.night = 'n' + today.strftime('%Y%m%d')
-                        self.i2positions = config['I2POSITIONS']
-                        for key in self.i2positions.keys():
-                                self.i2positions[key] = float(self.i2positions[key])
-                        self.thar_file = config['THARFILE']
-                        self.flat_file = config['FLATFILE']
+			if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
+				today = today + datetime.timedelta(days=1)
+            #self.night = 'n' + today.strftime('%Y%m%d')
+			self.i2positions = config['I2POSITIONS']
+			for key in self.i2positions.keys():
+				self.i2positions[key] = float(self.i2positions[key])
+			self.thar_file = config['THARFILE']
+			self.flat_file = config['FLATFILE']
 			self.i2settemp = float(config['I2SETTEMP'])
 			self.i2temptol = float(config['I2TEMPTOL'])
 			self.lastI2MotorLocation = 'UNKNOWN'
@@ -264,24 +263,24 @@ class spectrograph:
 	def settle_temp(self):
 		threading.Thread(target = self.send,args=('settle_temp ' + self.setTemp,910)).start()
 
-        def getexpflux(self, t0, tf=None, directory = '/Data/kiwilog/'):
-                flux = 0.0
+	def getexpflux(self, t0, tf=None, directory = '/Data/kiwilog/'):
+		flux = 0.0
 		night = t0.strftime('n%Y%m%d')
-                with open(directory + night + '/expmeter.dat', 'r') as fh:
-                        f = fh.read()
-                        lines = f.split('\n')
-                        for line in lines:
-                                entries = line.split(',')
-                                if len(entries[0]) == 26:
-                                        date = datetime.datetime.strptime(entries[0], '%Y-%m-%d %H:%M:%S.%f')
-					if tf != None:
-						if date > t0 and date < tf: 
-							flux += float(entries[1])
-						elif date > tf:
-							break
-					else:
-						if date > t0: flux += float(entries[1])
-                return flux
+		with open(directory + night + '/expmeter.dat', 'r') as fh:
+			f = fh.read()
+			lines = f.split('\n')
+			for line in lines:
+					entries = line.split(',')
+					if len(entries[0]) == 26:
+						date = datetime.datetime.strptime(entries[0], '%Y-%m-%d %H:%M:%S.%f')
+			if tf != None:
+				if date > t0 and date < tf: 
+					flux += float(entries[1])
+				elif date > tf:
+					return
+			else:
+				if date > t0: flux += float(entries[1])
+		return flux
                         
 		
 	# ##
@@ -361,49 +360,48 @@ class spectrograph:
 		
 #		imager = self.si_imager
 #		"""
-        	host = self.ip
-                port = self.camera_port
+		host = self.ip
+		port = self.camera_port
 
 		self.si_lock.acquire()
-                client = SIClient (host, port)
-                self.logger.info("Connected to SI client")
-
-                imager = Imager(client)
-                self.logger.info("Connected to SI imager")
-#		"""
-                self.si_imager = imager
-                self.si_imager.nexp = 1		        # number of exposures
-                self.si_imager.texp = exptime		# exposure time, float number
-                self.si_imager.nome = "image"		# file name to be saved
+		client = SIClient (host, port)
+		self.logger.info("Connected to SI client")
+		
+		imager = Imager(client)
+		self.logger.info("Connected to SI imager")
+		self.si_imager = imager
+		self.si_imager.nexp = 1		        # number of exposures
+		self.si_imager.texp = exptime		# exposure time, float number
+		self.si_imager.nome = "image"		# file name to be saved
 		if exptype == 0: self.si_imager.dark = True
 		else: self.si_imager.dark = False
-                self.si_imager.frametransfer = False	# frame transfer?
-                self.si_imager.getpars = False		# Get camera parameters and print on the screen
+		self.si_imager.frametransfer = False	# frame transfer?
+		self.si_imager.getpars = False		# Get camera parameters and print on the screen
 
-                # expose until exptime or expmeter >= flux
-                t0 = datetime.datetime.utcnow()
-                elapsedtime = 0.0
-                flux = 0.0
-                if expmeter <> None:
+		# expose until exptime or expmeter >= flux
+		t0 = datetime.datetime.utcnow()
+		elapsedtime = 0.0
+		flux = 0.0
+		if expmeter != None:
 			#S reset the exposure meter
 			self.reset_expmeter_total()
 			#S begin the imaging thread
-                        thread = threading.Thread(target=self.si_imager.do)
-                        thread.start()
-                        while elapsedtime < exptime:
-				#S we are going to query the expmeter total every second
-				#S probably could be finer resolution
-                                time.sleep(1.0)
-                                elapsedtime = (datetime.datetime.utcnow()-t0).total_seconds()
-                                flux = self.get_expmeter_total()
-                                self.logger.info("flux = " + str(flux))
-                                if expmeter < flux:
+			thread = threading.Thread(target=self.si_imager.do)
+			thread.start()
+			while elapsedtime < exptime:
+			#S we are going to query the expmeter total every second
+			#S probably could be finer resolution
+				time.sleep(1.0)
+				elapsedtime = (datetime.datetime.utcnow()-t0).total_seconds()
+				flux = self.get_expmeter_total()
+				self.logger.info("flux = " + str(flux))
+				if expmeter < flux:
 					self.logger.info('got to flux of '+str(flux)+', greater than expmeter: '+str(expmeter))
 					self.si_imager.interrupt()
-                                        #imager.retrieve_image()
-                                        break
+					#imager.retrieve_image()
+					return
 			
-                        #S this is on a level outside of the while for the elapsed time as the imager.do thread is 
+            #S this is on a level outside of the while for the elapsed time as the imager.do thread is 
 			#S is still running. e.g., we still want to wait whether the elapsed time has gone through or
 			#S the expmeter has triggered the interrupt.
 			thread.join(60)
@@ -418,51 +416,58 @@ class spectrograph:
 				return False
                         
 		else:
-                        self.si_imager.do()
-		#client.disconnect()
-		self.si_lock.release()
-                return self.save_image(self.file_name)
+			self.si_imager.do()
+			#client.disconnect()
+			self.si_lock.release()
+		return self.save_image(self.file_name)
 
 	#start exposure
 	def expose(self, exptime=1.0, exptype=1, expmeter=None):
-		
 		self.si_lock.acquire()
-                client = SIClient (self.ip, self.camera_port)
-                self.logger.info("Connected to SI client")
+		ipdb.set_tracer()
+		client = SIClient (self.ip, self.camera_port)
+		self.logger.info("Connected to SI client")
 
-                imager = Imager(client)
-                self.logger.info("Connected to SI imager")
+		imager = Imager(client)
+		self.logger.info("Connected to SI imager")
 
 		# set up exposure
-                imager.nexp = 1		        # number of exposures
-                imager.texp = exptime		# exposure time, float number
-                imager.nome = "image"		# file name to be saved
+		imager.nexp = 1		        # number of exposures
+		imager.texp = exptime		# exposure time, float number
+		imager.nome = "image"		# file name to be saved
 		if exptype == 0: imager.dark = True
 		else: imager.dark = False
-                imager.frametransfer = False	        # frame transfer?
-                imager.getpars = False		# Get camera parameters and print on the screen
+		imager.frametransfer = False	        # frame transfer?
+		imager.getpars = False		# Get camera parameters and print on the screen
 
-                self.logger.info("Exposing")
+		self.logger.info("Exposing")
 		imager.do()
 
-                self.logger.info("Image done; disconnecting")
+		self.logger.info("Image done; disconnecting")
 		client.disconnect()
 		self.si_lock.release()
-                return self.save_image(self.file_name)
+		return self.save_image(self.file_name)
  
 	#block until image is ready, then save it to file_name
-      	def set_file_name(self,file_name):
-        	if self.send('set_file_name ' + file_name,30) == 'success': return True
+	def set_file_name(self,file_name):
+		if self.send('set_file_name ' + file_name,30) == 'success': return True
 		else: return False
+
+
 	def save_image(self,file_name):
-        	if self.send('save_image ' + file_name,30) == 'success': return True
-		else: return False
+		if self.send('save_image ' + file_name,30) == 'success': 
+			return True
+		else:
+			return False
+	
+	
 	def image_name(self):
-                return self.file_name
+		return self.file_name
+	
 	#write fits header for self.file_name, header_info must be in json format
 	def write_header(self, header_info):
 		if self.file_name == '':
-                        self.logger.error("self.file_name is undefined")
+			self.logger.error("self.file_name is undefined")
 			return False
 		i = 800
 		length = len(header_info)
@@ -470,65 +475,69 @@ class spectrograph:
 			if self.send('write_header ' + header_info[i-800:i],3) == 'success':
 				i+=800
 			else:
-                                self.logger.error("write_header command failed")
+				self.logger.error("write_header command failed")
 				return False
 
 		if self.send('write_header_done ' + header_info[i-800:length],10) == 'success':
 			return True
 		else:
-                        self.logger.error("write_header_done command failed")
-			return False
+			self.logger.error("write_header_done command failed")
+		return False
 
 	def send_to_computer(self, cmd):
-
-                f = open(self.base_directory + '/credentials/authentication.txt','r')
-                username = f.readline().strip()
-                password = f.readline().strip()
-                f.close()
-
-                cmdstr = "cat </dev/null | winexe -U HOME/" + username + "%" + password + " //" + self.ip + " '" + cmd + "'"
-                os.system(cmdstr)
-#                self.logger.info('cmd=' + cmdstr + ', out=' + out + ', err=' + err)
-                self.logger.info(cmdstr)
-
+		f = open(self.base_directory + '/credentials/authentication.txt','r')
+		username = f.readline().strip()
+		password = f.readline().strip()
+		f.close()
+		cmdstr = "cat </dev/null | winexe -U HOME/" + username + "%" + password + " //" + self.ip + " '" + cmd + "'"
+		os.system(cmdstr)
+		# self.logger.info('cmd=' + cmdstr + ', out=' + out + ', err=' + err)
+		self.logger.info(cmdstr)
+	
 		'''
                 if 'NT_STATUS_HOST_UNREACHABLE' in out:
-                        self.logger.error('host not reachable')
-                        mail.send(self.telid + ' is unreachable',
-                                  "Dear Benevolent Humans,\n\n"+
-                                  "I cannot reach " + self.telid + ". Can you please check the power and internet connection?\n\n" +
-                                  "Love,\nMINERVA",level="serious")
-                        return False
+                    self.logger.error('host not reachable')
+                    mail.send(self.telid + ' is unreachable',
+                    "Dear Benevolent Humans,\n\n"+
+                    "I cannot reach " + self.telid + ". Can you please check the power and internet connection?\n\n" +
+                    "Love,\nMINERVA",level="serious")
+                    return False
                 elif 'NT_STATUS_LOGON_FAILURE' in out:
-                        self.logger.error('Invalid credentials')
-                        mail.send("Invalid credentials for " + self.telid,
-                                  "Dear Benevolent Humans,\n\n"+
-                                  "The credentials in " + self.base_directory +
-                                  '/credentials/authentication.txt (username=' + username +
-                                  ', password=' + password + ') appear to be outdated. Please fix it.\n\n' +
-                                  'Love,\nMINERVA',level="serious")
-                        return False
+                	self.logger.error('Invalid credentials')
+                	mail.send("Invalid credentials for " + self.telid,
+                    "Dear Benevolent Humans,\n\n"+
+                    "The credentials in " + self.base_directory +
+                    '/credentials/authentication.txt (username=' + username +
+                    ', password=' + password + ') appear to be outdated. Please fix it.\n\n' +
+                    'Love,\nMINERVA',level="serious")
+                    return False
                 elif 'ERROR: The process' in err:
-                        self.logger.info('Task already dead')
-                        return True
+					self.logger.info('Task already dead')
+					return True
 		'''
-                return True
+
+		return True
+
 	def safe_close(self):
 		if not self.skip_safe_close:
-			if self.send('safe_close None',10) == 'success': return True
-			else: return False
+			if self.send('safe_close None',10) == 'success': 
+				return True
+			else:
+				return False
 		return True
 
 	def kill_remote_task(self,taskname):
 		return self.send_to_computer("taskkill /IM " + taskname + " /f")
+	
 	def kill_server(self):
 		self.safe_close()	
 		return self.kill_remote_task('python.exe')
+	
 	def start_server(self):
-                ret_val = self.send_to_computer('schtasks /Run /TN "spectrograph_server"')
-                time.sleep(120)
+		ret_val = self.send_to_computer('schtasks /Run /TN "spectrograph_server"')
+		# time.sleep(120) comment out 4 debug
 		self.initialize_si()
-                return ret_val
+		return ret_val
 
 	def recover_server(self):
 		self.logger.error("Spectrograph recovery called.")
@@ -549,20 +558,26 @@ class spectrograph:
 		# this is always going to be true (?)
 		return self.start_server()
 
-        def recover(self):
+	def recover(self):
 		self.logger.info("Restarting SI Imager")
 		self.si_recover()
 
-		if self.recover_server(): return 'success'
+		if self.recover_server():
+			return 'success'
 
 		# never get here?	
 		self.logger.info("I don't think I'll ever get here. Is this true?")
 		self.logger.error("Called the recovery but we have no recovery procedure!")
 		if self.red: specname = 'MRED'
 		else: specname = 'Kiwispec'
-		mail.send(specname + " spectrograph software crashed","Dear Benevolent humans,\n\n"+
-			  "The " + specname + " spectrograph software has crashed and I have no recovery procedure for this. Good luck!\n\n"+
-			  "Love,\nMINERVA",level='serious', directory=self.directory)
+		mail.send(
+			specname + " spectrograph software crashed",
+			"Dear Benevolent humans,\n\n",
+			"The " + specname + " spectrograph software has crashed and I have no recovery procedure for this. Good luck!\n\n"+
+			"Love,\nMINERVA",
+			level='serious',
+			directory=self.directory
+			)
 		return 'fail'
 
 	def take_bias(self):
@@ -573,8 +588,7 @@ class spectrograph:
         
 	#TODO Can we change this to take a dict as an argument?
 	def take_image(self,exptime=1,objname='test',expmeter=None):
-
-                exptime = int(float(exptime)) #python can't do int(s) if s is a float in a string, this is work around
+		exptime = int(float(exptime)) #python can't do int(s) if s is a float in a string, this is work around
 		#put together file name for the image
 		ndx = self.get_index()
 		if ndx == -1:
@@ -590,7 +604,8 @@ class spectrograph:
 		#chose exposure type
 		if objname in self.exptypes.keys():
 			exptype = self.exptypes[objname] 
-		else: exptype = 1 # science exposure
+		else:
+			exptype = 1 # science exposure
 
                 ## configure spectrograph
                 # turn on I2 heater
@@ -600,21 +615,21 @@ class spectrograph:
                 # Move calibration FW
                 # begin exposure meter
 
-                self.set_file_name(self.file_name)
+		self.set_file_name(self.file_name)
 		
 		if self.red:
-			if self.send('expose ' + str(exptime) + ' 1 None',10) <> 'success': return False
+			if self.send('expose ' + str(exptime) + ' 1 None',10) != 'success':
+				return False
 			time.sleep(exptime+3.0)
 
 			filename = self.file_name
 
 			if self.save_image(filename):
-                                self.logger.info('Finish taking image: ' + filename)
-                                return filename
-                        else:
-                                self.logger.error('Failed to save image: ' + filename)
+				self.logger.info('Finish taking image: ' + filename)
+				return filename
+			else:
+				self.logger.error('Failed to save image: ' + filename)
 		else:
-
 			if self.expose_with_timeout(exptime=exptime, expmeter=expmeter):
 				self.logger.info('Finished taking image: ' + self.file_name)
 				self.nfailed = 0 # success; reset the failed counter
@@ -647,35 +662,34 @@ class spectrograph:
         # IODINE CELL HEATER FUNCTIONS
         ###
         
-        def cell_heater_on(self):
-                response = self.send('cell_heater_on None',10)
-                return response
-        def cell_heater_off(self):
-                response = self.send('cell_heater_off None',10)
-                return response
-        #TODO I don't think the second split is necessary on all these 'returns'
-        def cell_heater_temp(self):
-                response = self.send('cell_heater_temp None',10)
+	def cell_heater_on(self):
+		response = self.send('cell_heater_on None',10)
+		return response
+	def cell_heater_off(self):
+		response = self.send('cell_heater_off None',10)
+		return response
+        
+		#TODO I don't think the second split is necessary on all these 'returns'
+	
+	def cell_heater_temp(self):
+		response = self.send('cell_heater_temp None',10)
 		if response == 'fail': return False
-                return float(response.split()[1].split('\\')[0])
+		return float(response.split()[1].split('\\')[0])
 
-        def cell_heater_set_temp(self, temp):
-                response = self.send('cell_heater_set_temp ' + str(temp),10)
-		print response
+	def cell_heater_set_temp(self, temp):
+		response = self.send('cell_heater_set_temp ' + str(temp),10)
+		print(response)
 
 		if response == 'fail': return False
-                return float(response.split()[1].split('\\')[0])
+		return float(response.split()[1].split('\\')[0])
 
-        def cell_heater_get_set_temp(self):
-                response = self.send('cell_heater_get_set_temp None',10)
+	def cell_heater_get_set_temp(self):
+		response = self.send('cell_heater_get_set_temp None',10)
 		if response == 'fail':return False
-                return float(response.split()[1].split('\\')[0]) 
-
+		return float(response.split()[1].split('\\')[0]) 
 
 	def vent(self):
-
-                ipdb.set_trace()
-
+        # ipdb.set_trace()
 		timeout = 1200.0
 
 		# close the vent valve
@@ -690,29 +704,31 @@ class spectrograph:
 		self.logger.info("Turning off the pump")
 		self.benchpdu.pump.off()
 
-                spec_pressure= self.get_spec_pressure()
-                self.logger.info("Spectrograph pressure is " + str(spec_pressure) + " mbar")
+		spec_pressure= self.get_spec_pressure()
+		self.logger.info("Spectrograph pressure is " + str(spec_pressure) + " mbar")
 
 		if spec_pressure < 500.0:
-			mail.send("The spectrograph is pumped (" + str(spec_pressure) + " mbar and attempting to vent!","Manual login required to continue",level='Debug', directory=self.directory)
-			self.logger.error("The spectrograph is pumped (" + str(spec_pressure) + " mbar and attempting to vent; manual login required to continue")
-			ipdb.set_trace()
-			time.sleep(60)
+			mail.send("The spectrograph is pumped (" + str(spec_pressure) + " mbar and attempting to vent!",
+	     		"Manual login required to continue",
+		 		level='Debug', directory=self.directory)
+		self.logger.error("The spectrograph is pumped (" + str(spec_pressure) + " mbar and attempting to vent; manual login required to continue")
 
-			# TODO: make hold file to restart thread
+		time.sleep(60)
+
+		# TODO: make hold file to restart thread
 			
 		# open the vent valve
-                self.logger.info("Opening the vent valve")
+		self.logger.info("Opening the vent valve")
 		self.benchpdu.ventvalve.on()
 
 		t0 = datetime.datetime.utcnow()
 		elapsedtime = 0.0
-                spec_pressure = self.get_spec_pressure()
+		spec_pressure = self.get_spec_pressure()
 		while spec_pressure < 500.0:
 			elapsedtime = (datetime.datetime.utcnow() - t0).total_seconds()
-			self.logger.info('Waiting for spectrograph to vent (Pressure = ' + str(self.get_spec_pressure())\
-						 + ' mbar; elapsed time = '+ str(elapsedtime) + ' seconds)')
-                        spec_pressure = self.get_spec_pressure()
+			self.logger.info("Waiting for spectrograph to vent (Pressure = " + str(self.get_spec_pressure()) + 'mbar; elapsed time = ' + str(elapsedtime), 'seconds')
+			
+			spec_pressure = self.get_spec_pressure()
 
 		# TODO: monitor pressure during venting and create smarter error condition                                                                                         
 		if elapsedtime < timeout:
@@ -721,16 +737,23 @@ class spectrograph:
 			self.logger.error("Error venting the spectrograph")
 			return
 
-		self.logger.info("Venting complete; spectrograph pressure is " + str(spec_pressure) + ' mbar')
+		self.logger.info(
+			"Venting complete; spectrograph pressure is " +
+			str(spec_pressure) + 
+			' mbar'
+			)
 
 
 	# pump down the spectrograph (during the day)
 	def pump(self):
-
 		timeout = 1200
 
 		if self.get_spec_pressure() > 500:
-			mail.send("The spectrograph is at atmosphere!","Manual login required to continue", level='serious', directory=self.directory)
+			mail.send("The spectrograph is at atmosphere!",
+	     	"Manual login required to continue", 
+		 	level='serious', 
+			directory=self.directory
+			)
 			self.logger.error("The spectrograph is at atmosphere! Manual login required to continue")
 
 			# TODO: make hold file to restart thread
@@ -798,15 +821,15 @@ class spectrograph:
 
 			
 	def get_spec_pressure(self):
-                response = self.send('get_spec_pressure None',5)
-                if response == 'fail':
-                        return 'UNKNOWN'
+		response = self.send('get_spec_pressure None',5)
+		if response == 'fail':
+			return 'UNKNOWN'
 		return float(response.split()[1])
 
 	def get_pump_pressure(self):
-                response = self.send('get_pump_pressure None',5)
-                if response == 'fail':
-                        return 'UNKNOWN'
+		response = self.send('get_pump_pressure None',5)
+		if response == 'fail':
+			return 'UNKNOWN'
 		return float(response.split()[1])
 
         ###
@@ -814,15 +837,15 @@ class spectrograph:
         ###
 
         #S Initialize the stage, needs to happen before anyhting else.
-        def i2stage_connect(self):
-                response = self.send('i2stage_connect None',30)
-                return response
+	def i2stage_connect(self):
+		response = self.send('i2stage_connect None',30)
+		return response
         
         #S Disconnect the i2stage. If not done correctly, python.exe crash will happen.
         #S There is a safety disconnect in the safe_close() of spectrograph_server.py. 
-        def i2stage_disconnect(self):
-                response = self.send('i2stage_disconnect None',10)
-                return response
+	def i2stage_disconnect(self):
+		response = self.send('i2stage_disconnect None',10)
+		return response
 	
 	#S Home the iodine stage. This will return a certain ValueError(?), which
 	#S should be handled on the spectrograph server side. 
@@ -833,7 +856,8 @@ class spectrograph:
 		while response=='fail' and elapsedTime < timeout:
 			elapsedTime = (datetime.datetime.now() - t0).total_seconds()
 			response = self.send('i2stage_home None',10)
-			if response=='fail': time.sleep(1)
+			if response=='fail':
+				time.sleep(1)
 
 		if response=='fail': 
 			self.nfailed += 1
@@ -851,8 +875,8 @@ class spectrograph:
 
         #S Query the position of the i2stage. 
         #S response is 'success '+str(position)
-        def i2stage_get_pos(self):
-                response = self.send('i2stage_get_pos None',10)
+	def i2stage_get_pos(self):
+		response = self.send('i2stage_get_pos None',10)
 		if response == 'fail': return 'fail -999'
 		return [float(response.split()[1].split('\\')[0]),response.split()[2]]
 
@@ -860,55 +884,55 @@ class spectrograph:
         #S The positions are defined in spectrograph.ini AND spectrograph_server.ini,
         #S but I'm fairly certain they don't need to be in spectrograph.ini. Left
         #S Them just in case.
-        def i2stage_move(self,locationstr):
-                #S some hackery for writing info to headers in control.py
-                #TODO Can and should be gone about in a better way
-                self.lastI2MotorLocation = locationstr
-                response = self.send('i2stage_move '+locationstr,10)
+	def i2stage_move(self,locationstr):
+		#S some hackery for writing info to headers in control.py
+		#TODO Can and should be gone about in a better way
+		self.lastI2MotorLocation = locationstr
+		response = self.send('i2stage_move '+locationstr,10)
 
 		# potential infinite loop
 		if response == 'fail': 
 			self.recover()
 			return self.i2stage_move(locationstr)
-                return response
+		return response
 
 	# move the stage to an arbitrary position
-        def i2stage_movef(self,position):
-                self.lastI2MotorLocation = 'UNKNOWN'
-                response = self.send('i2stage_movef '+str(position),10)
-                return response
+	def i2stage_movef(self,position):
+		self.lastI2MotorLocation = 'UNKNOWN'
+		response = self.send('i2stage_movef '+str(position),10)
+		return response
 
         ###
         # THAR AND FLAT LAMPS
         ###
 
         #S Functions for toggling the ThAr lamp
-        def thar_turn_on(self):
-                response = self.send('thar_turn_on None',10)
-                return response
+	def thar_turn_on(self):
+		response = self.send('thar_turn_on None',10)
+		return response
 
-        def thar_turn_off(self):
-                response = self.send('thar_turn_off None',10)
-                return response
+	def thar_turn_off(self):
+		response = self.send('thar_turn_off None',10)
+		return response
 
         #S Functions for toggling the flat lamp
-        def flat_turn_on(self):
-                response = self.send('flat_turn_on None',10)
-                return response
+	def flat_turn_on(self):
+		response = self.send('flat_turn_on None',10)
+		return response
 
-        def flat_turn_off(self):
-                response = self.send('flat_turn_off None',10)
-                return response
+	def flat_turn_off(self):
+		response = self.send('flat_turn_off None',10)
+		return response
 
-        def backlight_on(self):
-                response = self.send('backlight_on None',10)
+	def backlight_on(self):
+		response = self.send('backlight_on None',10)
 		if response == 'fail':
 			self.backlight_power_cycle()
 			response = self.send('backlight_on None',10)
 		return response
 
-        def backlight_off(self):
-                response = self.send('backlight_off None',10)
+	def backlight_off(self):
+		response = self.send('backlight_off None',10)
 		if response == 'fail':
 			self.backlight_power_cycle()
 			response = self.send('backlight_off None',10)
@@ -918,13 +942,13 @@ class spectrograph:
 		response = self.send('backlight_power_cycle',60)
 		return response
 
-        def led_turn_on(self):
-                response = self.send('led_turn_on None',10)
-                return response
+	def led_turn_on(self):
+		response = self.send('led_turn_on None',10)
+		return response
 	
-        def led_turn_off(self):
-                response = self.send('led_turn_off None',10)
-                return response
+	def led_turn_off(self):
+		response = self.send('led_turn_off None',10)
+		return response
 
 	def get_expmeter_total(self):
 		response = self.send('get_expmeter_total None',10)
@@ -938,9 +962,9 @@ class spectrograph:
         #S from the LAST time it was turned on, not total time on. Used
         #S for equipment checks in control.py, so needed to send to
         #S the server.
-        def time_tracker_check(self,filename):
-                response = self.send("time_tracker_check "+filename,10)
-                return float(response.split()[1].split('\\')[0])
+	def time_tracker_check(self,filename):
+		response = self.send("time_tracker_check "+filename,10)
+		return float(response.split()[1].split('\\')[0])
         
 
 	def stop_log_expmeter(self):
@@ -988,30 +1012,40 @@ class spectrograph:
 		client.disconnect()
 		self.si_lock.release()
 
-if __name__ == '__main__':
-	
-	base_directory = '/home/minerva/minerva-control'
-        if socket.gethostname() == 'Kiwispec-PC': base_directory = 'C:/minerva-control'
-	spec = spectrograph('spectrograph.ini',base_directory)
-#        spec.pump()
 
+#alt testing ... for locating config file
+if __name__ == '__main__':
+	if socket.gethostname() == "Main":
+		base_directory = "/home/minerva/pyminerva/"
+		config_file = "spectrograph.ini"
+	elif socket.gethostname() == "HIRO":
+		base_directory = "/home/legokid/pyminerva"
+		config_file = "spectrograph.ini"
+	else:
+		base_directory = "/home/legokid/pyminerva"
+		config_file = "/home/legokid/pyminerva"
+	
+	# ipdb.set_trace()
+	spec = spectrograph(config_file, base_directory)
+	
 	client = SIClient(spec.ip, spec.camera_port)
 	imager = Imager(client)
-
-	ipdb.set_trace()
+	
+	
 	while True:
-		print 'spectrograph_control test program'
-		print ' a. take_image'
-		print ' b. expose'
-		print ' c. set_data_path'
-		print ' d. set_binning'
-		print ' e. set_size'
-		print ' f. settle_temp'
-		print ' g. vacuum pressure'
-		print ' h. atmospheric pressure'
-		print ' i. dummy'
-		print '----------------------------'
-		choice = raw_input('choice:')
+		print('spectrograph_control test program')
+		print(' a. take_image')
+		print(' b. expose')
+		print(' c. set_data_path')
+		print(' d. set_binning')
+		print(' e. set_size')
+		print(' f. settle_temp')
+		print(' g. vacuum pressure')
+		print(' h. atmospheric pressure')
+		print(' i. dummy')
+		print(' x. exit')
+		print( '----------------------------')
+		choice =  input("choice:")
 
 		if choice == 'a':
 			pass
@@ -1026,11 +1060,13 @@ if __name__ == '__main__':
 		elif choice == 'f':
 			spec.settle_temp()
 		elif choice == 'g':
-			print spec.get_vacuum_pressure()
+			print(spec.get_vacuum_pressure())
 		elif choice == 'h':
-			print spec.get_atmospheric_pressure()
+			print(spec.get_atmospheric_pressure)()
+		elif choice == 'x':
+			exit()
 		else:
-			print 'invalid choice'
+			print('invalid choice')
 			
 			
 	

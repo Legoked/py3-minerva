@@ -18,9 +18,9 @@ import logging
 #from si.packets import *
 #from si.commands import *
 
-from packet import Packet
-from packets import *
-from commands import *
+# from packet import Packet
+# from packet import *				......... modules not used...?
+# from commands import *
 
 class AckException(Exception):
 	'''
@@ -35,7 +35,7 @@ class AckException(Exception):
 class SIClient (object):
 	"""SIClient.
 
-	SIClient communicates with the SI server. SIClient execute CameraCommand´s using the executeCommand method.
+	SIClient communicates with the SI server. SIClient execute CameraCommandï¿½s using the executeCommand method.
 	"""
 
 
@@ -54,8 +54,8 @@ class SIClient (object):
 		try:
 			self.sk = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
 			self.sk.connect ((self.host, self.port))
-			self.sk.settimeout (40)#??
-		except socket.error, e:
+			self.sk.settimeout (5)#??
+		except socket.error as e:
 			raise e
 
 	def disconnect (self):
@@ -129,7 +129,7 @@ class SIClient (object):
 		if not self.sk:
 			try:
 				self.connect ()
-			except socket.error, e:
+			except socket.error as e:
 				raise e
 
 		cmd_to_send = cmd.command ()
@@ -167,18 +167,18 @@ class SIClient (object):
 					#return ack
 					if not ack.accept:
 						 raise AckException("Camera did not accepted command...")
+						 
 
-				
 				if header.id == 131:
 #					print 'data package'
 
 
 					
 					data = cmd.result ()
-                        		data.fromStruct (header_data + self.recv (header.length - len(header)))
+					data.fromStruct (header_data + self.recv (header.length - len(header)))
 					#data.fromStruct (header_data + self.recv (header.length))
 #					logging.debug (data)
-					
+
 #					print data.data_type
 					
 					if data.data_type == 2002:

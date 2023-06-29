@@ -2,15 +2,17 @@
 import glob
 import os
 import numpy
-import logging
-import ipdb
+# import logging ...... moduile not used
+import ipdb  #........ not used
 
 # ask to use numpy
 os.environ["NUMERIX"] = "numpy"
 from astropy.io import fits as pyfits
 
-#from si.commands import *
-from commands import *
+from si.commands import *
+from .commands.camera import *
+
+import subprocess
 
 class Imager (object):
 
@@ -31,8 +33,7 @@ class Imager (object):
 		self._term = False
 
 	def doSingleFrame (self):
-
-                SetAcquisitionMode(0)
+		SetAcquisitionMode(0)
 		
 		self.client.executeCommand (SetAcquisitionMode (0)) # SINGLE FRAMES
 
@@ -42,7 +43,6 @@ class Imager (object):
 			self.client.executeCommand (SetAcquisitionType (0)) # LIGHT, BUFFER 1
 
 		self.client.executeCommand (SetExposureTime(float(self.texp)))
-                
 		self.client.executeCommand (Acquire ())
 
 		return True
@@ -266,15 +266,16 @@ class Imager (object):
 		self.client.executeCommand(SetCooler(0))
 	
 	def setReadoutMode(self,number):
+		# ipdb.set_trace()
 		self.client.executeCommand(SetReadoutMode(number))
 	
 	def setCCDFormatParameters(self,SerialOrigin,SerialLength,SerialBinning,ParallelOrigin,ParallelLength,ParallelBinning):
 		self.client.executeCommand(SetCCDFormatParameters(SerialOrigin,SerialLength,SerialBinning,ParallelOrigin,ParallelLength,ParallelBinning))
 	def inquireAcquisitionStatus(self):
-		print self.client.executeCommand(InquireAcquisitionStatus())
+		print(self.client.executeCommand(InquireAcquisitionStatus()))
 		
 	def getStatusFromCamera(self):
-		print self.client.executeCommand(GetStatusFromCamera())
+		print(self.client.executeCommand(GetStatusFromCamera()))
 	
 if __name__ == '__main__':
 	pass
