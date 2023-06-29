@@ -32,6 +32,6 @@ The Telescope Operations and Guidance Software is released under the [MIT Licens
 
 ## Contact
 
-If you have any questions or need further assistance, please reach out to the project maintainers at [telescope-software@example.com](mailto:telescope-software@example.com).
+If you have any questions or need further assistance, please reach out to the project maintainers at <insert emails here>.
 
 Happy observing and enjoy using the Telescope Operations and Guidance Software!
