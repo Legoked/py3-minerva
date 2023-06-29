@@ -53,8 +53,8 @@ class SIClient (object):
 
 		try:
 			self.sk = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
-			self.sk.connect ((self.host, self.port))
-			self.sk.settimeout (5)#??
+			self.sk.connect((self.host, self.port))
+			self.sk.settimeout (5)#?? #spectrograph rev stops here... what can we do debug w/o hardware???
 		except socket.error as e:
 			raise e
 
@@ -128,7 +128,7 @@ class SIClient (object):
 
 		if not self.sk:
 			try:
-				self.connect ()
+				self.connect()
 			except socket.error as e:
 				raise e
 
