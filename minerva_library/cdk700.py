@@ -4,6 +4,7 @@
 # import matplotlib.pyplot as plt
 
 import urllib
+
 # import urllib.request as urllib : if urllib does not work, try this
 import datetime
 import time
@@ -11,13 +12,15 @@ import logging
 import json
 import os
 import sys
-import ipdb # : Not used; will be used eventually
+import ipdb  # : Not used; will be used eventually
 import mail
 import math
+
 # import numpy
 import pdu
 import pdu_thach
 import threading
+
 # import numpy as np
 import socket
 import shutil
@@ -1350,7 +1353,7 @@ class CDK700:
     def addPointToModel():
         pass
 
-    '''
+    """
     # to remove; matplotlib dependancy should be moved to a higher level code
 
 
@@ -1403,7 +1406,7 @@ class CDK700:
         plt.savefig(
             self.datadir + minerva.site.night + "/flexure_test." + self.id + ".png"
         )
-    '''
+    """
     """
     makes a pointing model
     """
@@ -1697,7 +1700,7 @@ class CDK700:
 
             pointsAdded += 1
 
-    '''
+    """
     #to remove matplotlib dependancy; belongs in a higher level code
 
     def diagnoseFlexure(
@@ -1818,7 +1821,8 @@ class CDK700:
             self.logger.exception("plotting failed :(")
 
         return alts, foci
-    '''
+    """
+
     # this is designed to calibrate the rotator using a single bright star
     def calibrateRotator(self, camera, fau=True, exptime=1):
         # slew to bright star
@@ -2785,7 +2789,7 @@ class CDK700:
 # test program
 if __name__ == "__main__":
     if socket.gethostname() == "Main":
-        base_directory = "/home/minerva/pyminerva/" # Adding my local hostname
+        base_directory = "/home/minerva/pyminerva/"  # Adding my local hostname
         config_file = "telescope_1.ini"
     elif socket.gethostname() == "HIRO":
         base_directory = "/home/legokid/pyminerva/"
@@ -2806,13 +2810,13 @@ if __name__ == "__main__":
         print(" f. n/a")
         print(" x. exit")
         print("----------------------------")
-        choice =  input("choice:")
+        choice = input("choice:")
 
         if choice == "a":
             telescope.mountGotoAltAz(45, 45)
         elif choice == "b":
             # ipdb.set_trace()
-            telescope.startAutoFocus() # used to be autoFocus; not sure if still used but still works with this
+            telescope.startAutoFocus()  # used to be autoFocus; not sure if still used but still works with this
         elif choice == "c":
             telescope.killPWI()
         elif choice == "d":
@@ -2821,7 +2825,7 @@ if __name__ == "__main__":
             pass
         elif choice == "f":
             pass
-        elif choice == "x": # short way to exit program
+        elif choice == "x":  # short way to exit program
             quit()
         else:
             print("invalid choice")
