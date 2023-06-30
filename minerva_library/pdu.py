@@ -148,7 +148,7 @@ class pdu:
             (("SNMPv2-MIB", "sysObjectID"), 0),
         )
         if errorIndication:
-            raise PduError(errorIndication)
+            raise PduError(errorIndication) #firewall/connection issue?
         else:
             if errorStatus:
                 raise PduError(
