@@ -228,7 +228,7 @@ class site:
             return {}
         return weather
     """
-    """
+    
     def getWeatherRidge(self):
         # the URL for the machine readable weather page for the Ridge
         url = "http://linmax.sao.arizona.edu/weather/weather.cur_cond"
@@ -274,7 +274,7 @@ class site:
         for parameter in data[1:-1]:
             weather[(parameter.split("="))[0]] = float((parameter.split("="))[1])
         return weather
-        """
+        
 
     def getWeather(self):
         self.logger.debug("Beginning serial communications with the weather station")
@@ -773,12 +773,12 @@ class site:
 
 
 if __name__ == "__main__":
-    base_directory = "/home/minerva/minerva-control"
+    base_directory = "/home/legokid/pyminerva"
     test_site = site("site_mtHopkins.ini", base_directory)
     # test_site.getWeatherRidge()
     test_site.getSkyLimit()
 
-    ipdb.set_trace()
+    # ipdb.set_trace()
 
     start = "n20160101"
     end = "n20191231"
@@ -820,6 +820,6 @@ if __name__ == "__main__":
     plt.plot([0, len(nauttwils)], [0, 0], "k")
     plt.show()
 
-    ipdb.set_trace()
+    # ipdb.set_trace()
     print(test_site.night)
-    print(test_site.oktoopen())
+    print(test_site.oktoopen("aqawan1"))
