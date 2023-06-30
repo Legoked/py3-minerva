@@ -60,9 +60,9 @@ class aqawan:
 			sys.exit() 
 		
 		today = datetime.datetime.utcnow()
-                if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
-                        today = today + datetime.timedelta(days=1)
-                self.night = 'n' + today.strftime('%Y%m%d')
+		if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
+			today = today + datetime.timedelta(days=1)
+		self.night = 'n' + today.strftime('%Y%m%d')
 
 	def isOpen(self):
 		filename = self.base_directory + '/minerva_library/aqawan' + str(self.num) + '.stat'
@@ -223,7 +223,7 @@ class aqawan:
 			time.sleep(15.0) # make sure we don't block heartbeats
 
 		# Did it fail to open?
-		if status['Shutter' + str(shutter)] <> 'OPEN':
+		if status['Shutter' + str(shutter)] != 'OPEN':
 			self.logger.error('Error opening Shutter ' + str(shutter) + ', status=' + status['Shutter' + str(shutter)] )
 			return -1
 
@@ -295,10 +295,10 @@ class aqawan:
 			else:
 				self.logger.info(response)    
 				start = datetime.datetime.utcnow()
-				while (status['Shutter1'] <> "CLOSED" or status['Shutter2'] <> "CLOSED") and elapsedTime < timeout:
+				while (status['Shutter1'] != "CLOSED" or status['Shutter2'] != "CLOSED") and elapsedTime < timeout:
 					elapsedTime = (datetime.datetime.utcnow() - start).total_seconds()
 					status = self.status()
-				if status['Shutter1'] <> "CLOSED" or status['Shutter2'] <> "CLOSED":
+				if status['Shutter1'] != "CLOSED" or status['Shutter2'] != "CLOSED":
 					self.logger.error('Aqawan failed to close after ' + str(elapsedTime) + 'seconds!')
 					if not self.mailsent:
 						mail.send("Aqawan " + str(self.num) + " failed to close within the timeout!","Love,\nMINERVA",level="critical")
@@ -312,7 +312,7 @@ class aqawan:
 			
 if __name__ == '__main__':
 
-	base_directory = '/home/minerva/minerva-control'
+	base_directory = '/home/legokid/pyminerva'
 	dome = aqawan('aqawan_1.ini',base_directory)
 	ipdb.set_trace()
 	# while True:

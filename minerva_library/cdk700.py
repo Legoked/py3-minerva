@@ -457,7 +457,6 @@ class CDK700:
             ret = False
             self.restartPWI()
             ret = urllib.request.urlopen(url).read()
-
         return ret
 
     def parseXml(self, xml):
