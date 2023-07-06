@@ -92,12 +92,13 @@ def elementTreeToObject(elementTreeNode):
 
 class CDK700:
     def __init__(
-        self, config, base="", red=False, south=False, thach=False, directory=None
+        self, config, base="", red=False, south=False, thach=False, directory=None, tunnel=False
     ):
         # S Set config file
         self.config_file = config
         # S Set base directory
         self.base_directory = base
+        self.tunnel = tunnel
         # S Get values from config_file
         # ipdb.set_trace()
         self.load_config()
@@ -368,8 +369,12 @@ class CDK700:
     def load_config(self):
         try:
             config = ConfigObj(self.base_directory + "/config/" + self.config_file)
-            self.HOST = config["Setup"]["HOST"]
-            self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
+            if self.tunnel:
+                self.HOST = "localhost"
+                self.NETWORKPORT = config["Setup"]["TUNNEL_PORT"]
+            else:
+                self.HOST = config["Setup"]["HOST"]
+                self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
             self.fau = config["Setup"]["FAU"]
@@ -452,11 +457,11 @@ class CDK700:
         # ipdb.set_trace()
         url = self.makeUrl(**kwargs)
         try:
-            ret = urllib.urlopen(url).read()
+            ret = urllib.request.urlopen(url).read()
         except:
             ret = False
-            self.restartPWI()
-            ret = urllib.request.urlopen(url).read()
+            # self.restartPWI()
+            # ret = urllib.request.urlopen(url).read()
         return ret
 
     def parseXml(self, xml):
@@ -2791,14 +2796,19 @@ if __name__ == "__main__":
     if socket.gethostname() == "Main":
         base_directory = "/home/minerva/pyminerva/"  # Adding my local hostname
         config_file = "telescope_1.ini"
+        tunnel = False
     elif socket.gethostname() == "HIRO":
         base_directory = "/home/legokid/pyminerva/"
         config_file = "telescope_1.ini"
+        tunnel = True
     else:
         base_directory = "C:/minerva-control/"
         config_file = "telescope_" + socket.gethostname()[1] + ".ini"
+        tunnel = False
 
-    telescope = CDK700(config_file, base_directory)
+    telescope = CDK700(config_file, base_directory,tunnel = tunnel)
+    ipdb.set_trace()
+    
     print(telescope.config_file)
     while True:
         print(telescope.logger_name + " test program")
