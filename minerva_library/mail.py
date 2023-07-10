@@ -26,6 +26,8 @@ def send(
     host = socket.gethostname()
     if host == "Main":
         credential_directory = "/home/minerva/minerva-control/credentials/"
+    elif host == "HIRO":
+        credential_directory = "/home/legokid/pyminerva/credentials/"
     else:
         credential_directory = "C:/minerva-control/credentials/"
     # read in the contacts directory (proprietary)

@@ -92,7 +92,14 @@ def elementTreeToObject(elementTreeNode):
 
 class CDK700:
     def __init__(
-        self, config, base="", red=False, south=False, thach=False, directory=None, tunnel=False
+        self,
+        config,
+        base="",
+        red=False,
+        south=False,
+        thach=False,
+        directory=None,
+        tunnel=False,
     ):
         # S Set config file
         self.config_file = config
@@ -2681,7 +2688,7 @@ class CDK700:
         time.sleep(10.0)
 
     def restartPWI(self, email=True):
-        self.abort()
+        self.killPWI()
         time.sleep(5.0)
         return self.startPWI(email=email)
 
@@ -2806,9 +2813,11 @@ if __name__ == "__main__":
         config_file = "telescope_" + socket.gethostname()[1] + ".ini"
         tunnel = False
 
-    telescope = CDK700(config_file, base_directory,tunnel = tunnel)
+    telescope = CDK700(config_file, base_directory, tunnel=tunnel)
     ipdb.set_trace()
-    
+
+''' # using ipdb debugging to test out telescope in meantime
+
     print(telescope.config_file)
     while True:
         print(telescope.logger_name + " test program")
@@ -2839,3 +2848,4 @@ if __name__ == "__main__":
             quit()
         else:
             print("invalid choice")
+'''
