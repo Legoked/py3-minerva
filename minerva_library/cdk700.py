@@ -378,9 +378,11 @@ class CDK700:
             config = ConfigObj(self.base_directory + "/config/" + self.config_file)
             if self.tunnel:
                 self.HOST = "localhost"
+                self.SSH_PORT = config["Setup"]["SSH_PORT"]
                 self.NETWORKPORT = config["Setup"]["TUNNEL_PORT"]
             else:
                 self.HOST = config["Setup"]["HOST"]
+                self.SSH_PORT = 22
                 self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
@@ -2720,13 +2722,17 @@ class CDK700:
             + password
             + "'"
             + " ssh "
+            + '-p '
+            + self.SSH_PORT
+            + " "
             + username
             + "@"
             + self.HOST
             + " '"
             + cmd
             + "'"
-        )  # makes the command str
+        )
+          # makes the command str
         # example: sshpass -p "PASSWORD" ssh USER@IP 'schtasks /Run /TN "Start PWI"'
         os.system(cmdstr)
         self.logger.info("cmd=" + cmd + ", out=" + out + ", err=" + err)
@@ -2848,4 +2854,4 @@ if __name__ == "__main__":
             quit()
         else:
             print("invalid choice")
-'''
+''' 
