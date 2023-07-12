@@ -92,7 +92,14 @@ def elementTreeToObject(elementTreeNode):
 
 class CDK700:
     def __init__(
-        self, config, base="", red=False, south=False, thach=False, directory=None, tunnel=False
+        self,
+        config,
+        base="",
+        red=False,
+        south=False,
+        thach=False,
+        directory=None,
+        tunnel=False,
     ):
         # S Set config file
         self.config_file = config
@@ -371,9 +378,11 @@ class CDK700:
             config = ConfigObj(self.base_directory + "/config/" + self.config_file)
             if self.tunnel:
                 self.HOST = "localhost"
+                self.SSH_PORT = config["Setup"]["SSH_PORT"]
                 self.NETWORKPORT = config["Setup"]["TUNNEL_PORT"]
             else:
                 self.HOST = config["Setup"]["HOST"]
+                self.SSH_PORT = 22
                 self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
@@ -2681,7 +2690,7 @@ class CDK700:
         time.sleep(10.0)
 
     def restartPWI(self, email=True):
-        self.abort()
+        self.killPWI()
         time.sleep(5.0)
         return self.startPWI(email=email)
 
@@ -2713,13 +2722,17 @@ class CDK700:
             + password
             + "'"
             + " ssh "
+            + '-p '
+            + self.SSH_PORT
+            + " "
             + username
             + "@"
             + self.HOST
             + " '"
             + cmd
             + "'"
-        )  # makes the command str
+        )
+          # makes the command str
         # example: sshpass -p "PASSWORD" ssh USER@IP 'schtasks /Run /TN "Start PWI"'
         os.system(cmdstr)
         self.logger.info("cmd=" + cmd + ", out=" + out + ", err=" + err)
@@ -2806,9 +2819,11 @@ if __name__ == "__main__":
         config_file = "telescope_" + socket.gethostname()[1] + ".ini"
         tunnel = False
 
-    telescope = CDK700(config_file, base_directory,tunnel = tunnel)
+    telescope = CDK700(config_file, base_directory, tunnel=tunnel)
     ipdb.set_trace()
-    
+
+''' # using ipdb debugging to test out telescope in meantime
+
     print(telescope.config_file)
     while True:
         print(telescope.logger_name + " test program")
@@ -2839,3 +2854,4 @@ if __name__ == "__main__":
             quit()
         else:
             print("invalid choice")
+''' 
