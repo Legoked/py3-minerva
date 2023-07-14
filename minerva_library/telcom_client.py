@@ -30,10 +30,10 @@ class telcom_client:
 			print('ERROR accessing configuration file: ' + self.config_file)
 			sys.exit()
 
-                today = datetime.datetime.utcnow()
-                if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
-                        today = today + datetime.timedelta(days=1)
-                self.night = 'n' + today.strftime('%Y%m%d')
+		today = datetime.datetime.utcnow()
+		if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
+			today = today + datetime.timedelta(days=1)
+			self.night = 'n' + today.strftime('%Y%m%d')
 			
 	#return a socket object connected to the server
 	def connect_server(self):
@@ -106,27 +106,34 @@ class telcom_client:
 		else:
 			return False
 	def setxmlfile(self, filename):
-		if (self.send('setxmlfile '+filename,15)).split()[0] == 'success':
+		if (self.send('setxmlfile '+ filename,15)).split()[0] == 'success':
 			return True
 		else:
 			return False
 	def checkPointingModel(self, filename):
-		if (self.send('checkPointingModel '+filename,15)).split()[0] == 'success':
+		if (self.send('checkPointingModel '+ filename,15)).split()[0] == 'success':
 			return True
 		else:
 			return False
 
 
-if __name__ == '__main__':
-	
-	config_file = 'telcom_client_2.ini'
-	base_d = '/home/minerva/minerva-control'
+if __name__ == '__main__':    
+	if socket.gethostname() == "Main":
+		base_d = '/home/minerva/minerva-control' 
+		config_file = 'telcom_client_2.ini'
+		tunnel = False
+	elif socket.gethostname() == "HIRO":
+		base_directory = "/home/legokid/pyminerva/" # Adding my local hostname
+		config_file = "telescope_1.ini"
+		tunnel = True
+
+	#########################################
 	
 	client = telcom_client(config_file,base_d)
 	if client.restartPWI():
-		print 'success'
+		print('success')
 	else:
-		print 'fail'
+		print('fail')
 	
 	
 	
