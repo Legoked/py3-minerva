@@ -380,10 +380,12 @@ class CDK700:
                 self.HOST = "localhost"
                 self.SSH_PORT = config["Setup"]["SSH_PORT"]
                 self.NETWORKPORT = config["Setup"]["TUNNEL_PORT"]
+                self.modeldir = config["Setup"]["TUNNEL_MODELDIR"]
             else:
                 self.HOST = config["Setup"]["HOST"]
                 self.SSH_PORT = 22
                 self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
+                self.modeldir = config["Setup"]["MODELDIR"]
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
             self.fau = config["Setup"]["FAU"]
@@ -394,7 +396,6 @@ class CDK700:
             self.horizon = float(config["Setup"]["HORIZON"])
             self.nfailed = 0
             self.port = config["PORT"]
-            self.modeldir = config["Setup"]["MODELDIR"]
             self.datadir = config["Setup"]["DATADIR"]
             self.model = config["MODEL"]
             try:
@@ -2533,7 +2534,7 @@ class CDK700:
         self.logger.info("Turning mount tracking off")
         self.mountTrackingOff()
 
-    def recoverFocuser(self, focus, m3port):
+    def recoverFocuser(self, focus, m3port):        # havent tested w/ py3; should belong in higher level code
         timeout = 60.0
 
         if focus < float(self.minfocus[m3port]) or focus > float(self.maxfocus[m3port]):
