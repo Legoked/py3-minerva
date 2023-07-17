@@ -186,6 +186,7 @@ class fau:
     # 		res = self.send('get_index none',5).split()
     # 		if res[0] == 'success': return int(res[1])
     # 		else: return -1
+
     def write_header(self, header_info):
         if self.file_name == "":
             self.logger.error("Empty file name")
