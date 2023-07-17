@@ -386,6 +386,7 @@ class CDK700:
                 self.SSH_PORT = 22
                 self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
                 self.modeldir = config["Setup"]["MODELDIR"]
+                
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
             self.fau = config["Setup"]["FAU"]
