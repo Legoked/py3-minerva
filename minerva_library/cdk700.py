@@ -2822,45 +2822,7 @@ if __name__ == "__main__":
         tunnel = False
 
     telescope = CDK700(config_file, base_directory, tunnel=tunnel)
-<<<<<<< Updated upstream
-    ipdb.set_trace()
-
-''' # using ipdb debugging to test out telescope in meantime
-
-    print(telescope.config_file)
-    while True:
-        print(telescope.logger_name + " test program")
-        print(" a. move to alt az")
-        print(" b. auto focus")
-        print(" c. kill pwi")
-        print(" d. start pwi")
-        print(" e. n/a")
-        print(" f. n/a")
-        print(" x. exit")
-        print("----------------------------")
-        choice = input("choice:")
-
-        if choice == "a":
-            telescope.mountGotoAltAz(45, 45)
-        elif choice == "b":
-            # ipdb.set_trace()
-            telescope.startAutoFocus()  # used to be autoFocus; not sure if still used but still works with this
-        elif choice == "c":
-            telescope.killPWI()
-        elif choice == "d":
-            telescope.startPWI()
-        elif choice == "e":
-            pass
-        elif choice == "f":
-            pass
-        elif choice == "x":  # short way to exit program
-            quit()
-        else:
-            print("invalid choice")
-''' 
-=======
     
     ## For testing functions within cdk700 class:
     ## type 'telescope.' followed by the function you want to test/use
     ipdb.set_trace()
->>>>>>> Stashed changes

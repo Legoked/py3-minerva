@@ -22,19 +22,6 @@ sys.dont_write_bytecode = True
 import copy
 
 #Minerva library dependency
-<<<<<<< Updated upstream
-import env
-import aqawan
-import cdk700
-import imager
-import imager_ascom
-import fau
-import spectrograph
-import astrohaven
-import utils
-import pdu
-import mail
-=======
 import env 			# DA - rewritten in PY3 - setup config for tunnel
 import aqawan 		# DA - rewritten in PY3 - setup config for tunnel
 import cdk700 		# DA - rewritten in PY3
@@ -46,7 +33,6 @@ import astrohaven	# DA - rewritten in PY3 - setup config for tunnel
 import utils		# DA - rewritten in PY3
 import pdu			# DA - rewritten in PY3
 import mail			# DA - rewritten in PY3
->>>>>>> Stashed changes
 from get_all_centroids import *
 import segments
 import newauto
