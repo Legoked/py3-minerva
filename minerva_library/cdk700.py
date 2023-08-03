@@ -127,7 +127,7 @@ class CDK700:
         self.num = self.logger_name[-1]
 
         # S Set up logger
-        self.logger = utils.setup_logger(
+        self.logger = utils.setup_logger( 
             self.base_directory, self.night, self.logger_name
         )
 
@@ -136,7 +136,8 @@ class CDK700:
             self.pdu = pdu_thach.pdu(self.pdu_config, base)
         else:
             # ipdb.set_trace()
-            self.pdu = pdu.pdu(self.pdu_config, base)
+            self.pdu = pdu.pdu(self.pdu_config, base,tunnel=self.tunnel)
+            print(self.tunnel)
 
         # this prevents multiple threads from trying to slew the same mechanism at the same time
         self.telescope_lock = threading.RLock()
@@ -202,7 +203,7 @@ class CDK700:
     # additional higher level routines
     # tracking and derotating should be on by default
     # much worse to be off when it should be on than vice versa
-    def isInitialized(self, tracking=True, derotate=True):
+    def isInitialized(self, tracking=True, derotate=True): # DA -- Py3 
         # check to see if it's properly initialized
         telescopeStatus = self.getStatus()
 
@@ -298,7 +299,7 @@ class CDK700:
 
     # by default, set tracking and derotating
     # it's much worse to have it off when it should be on than vice versa
-    def initialize(self, tracking=True, derotate=True):
+    def initialize(self, tracking=True, derotate=True): # DA - py3 Tested
         # 		while self.threadActive:
         # 			time.sleep(0.1)
         # 		self.threadActive = True
@@ -373,10 +374,10 @@ class CDK700:
 
         return self.isInitialized(tracking=tracking, derotate=derotate)
 
-    def load_config(self):
+    def load_config(self): #DA - py3 Tested (possible pdu issues here??)
         try:
             config = ConfigObj(self.base_directory + "/config/" + self.config_file)
-            if self.tunnel:
+            if self.tunnel: 
                 self.HOST = "localhost"
                 self.SSH_PORT = config["Setup"]["SSH_PORT"]
                 self.NETWORKPORT = config["Setup"]["TUNNEL_PORT"]
@@ -386,7 +387,7 @@ class CDK700:
                 self.SSH_PORT = 22
                 self.NETWORKPORT = config["Setup"]["NETWORKPORT"]
                 self.modeldir = config["Setup"]["MODELDIR"]
-                
+
             self.imager = config["Setup"]["IMAGER"]
             self.guider = config["Setup"]["GUIDER"]
             self.fau = config["Setup"]["FAU"]
@@ -437,7 +438,7 @@ class CDK700:
         self.night = "n" + today.strftime("%Y%m%d")
 
     # SUPPORT FUNCTIONS
-    def makeUrl(self, **kwargs):
+    def makeUrl(self, **kwargs): # DA - py3 Tested
         """
         Utility function that takes a set of keyword=value arguments
         and converts them into a properly formatted URL to send to PWI.
@@ -453,7 +454,7 @@ class CDK700:
         url = url + urllib.parse.urlencode(dict(**kwargs))
         return url
 
-    def pwiRequest(self, **kwargs):
+    def pwiRequest(self, **kwargs): # DA -Py3 Tested
         """
         Issue a request to PWI using the keyword=value parameters
         supplied to the function, and return the response received from
@@ -475,7 +476,7 @@ class CDK700:
             # ret = urllib.request.urlopen(url).read()
         return ret
 
-    def parseXml(self, xml):
+    def parseXml(self, xml): #DA -py3 Tested
         """
         Convert the XML into a smart structure that can be navigated via
         the tree of tag names; e.g. "status.mount.ra"
@@ -483,7 +484,7 @@ class CDK700:
 
         return elementTreeToObject(ElementTree.fromstring(xml))
 
-    def pwiRequestAndParse(self, **kwargs):
+    def pwiRequestAndParse(self, **kwargs): # DA - Py3 Tested
         """
         Works like pwiRequest(), except returns a parsed XML object rather
         than XML text
@@ -494,22 +495,24 @@ class CDK700:
         return self.parseXml(ret)
 
     ### Status wrappers #####################################
-    def getStatusXml(self):
+    def getStatusXml(self): # DA - py3 Tested
         """
         Return a string containing the XML text representing the status of the telescope
         """
         return self.pwiRequest(cmd="getsystem")
-
+    
+    '''
     def status(self):
         import xmltodict
 
         status = xmltodict.parse(self.getStatusXml())["system"]
 
-        with open(self.currentStatusFile, "w") as outfile:
+        with open(self.currentStatusFile, "w") as outfile: ## currentStatusFile DNE??
             json.dump(status, outfile)
 
         return status
-
+    '''
+    
     def getStatus(self):
         """
         Return a status object representing the tree structure of the XML text.
@@ -1166,7 +1169,7 @@ class CDK700:
             device="mount", cmd="move", ra2000=ra2000Hours, dec2000=dec2000Degs
         )
 
-    def mountGotoAltAz(self, altDegs, azmDegs):
+    def mountGotoAltAz(self, altDegs, azmDegs): #DA - Py3 Tested
         return self.pwiRequestAndParse(
             device="mount", cmd="move", alt=altDegs, azm=azmDegs
         )
@@ -2404,7 +2407,7 @@ class CDK700:
 
         return telescopeStatus.mount.moving == "True"
 
-    def radectoaltaz(self, ra, dec, date=None):
+    def radectoaltaz(self, ra, dec, date=None): # 
         # if set as a default, it evaluates once when the function is initialized
         # not every time the function is called
         if date == None:
@@ -2490,25 +2493,7 @@ class CDK700:
                 % (m3port, telescopeStatus.m3.port)
             )
 
-    def isReady(self, tracking=False, port=None, ra=None, dec=None, pa=None):
-        if not self.isInitialized():
-            # TODO
-            # S This is not smart, need to work in a recovery process some how
-            while not self.initialize(tracking=tracking):
-                pass
-        self.inPostion()
-        status = self.getStatus()
-        if port == None:
-            self.logger.info(
-                "No M3 port specified, using current port(%s)" % (status.m3.port)
-            )
-        if (ra == None) or (dec == None):
-            self.logger.info(
-                "No target coordinates given, maintaining ra=%s,dec=%s"
-                % (str(ra), str(dec))
-            )
-
-    def park(self, parkAlt=25.0, parkAz=0.0):
+    def park(self, parkAlt=25.0, parkAz=0.0): # DA - py3 Tested 
         # park the scope (no danger of pointing at the sun if opened during the day)
         if not self.initialize(tracking=True, derotate=False):
             self.recover()
@@ -2602,13 +2587,14 @@ class CDK700:
             self.focuserStop(m3port)
             self.rotatorStopDerotating(m3port)
             self.focuserDisconnect(m3port)
+            
 
         self.logger.info("Turning off tracking")
         self.mountTrackingOff()
-        self.logger.info("Disconnecting from the mount")
-        self.mountDisconnect()
         self.logger.info("Disabling motors")
         self.mountDisableMotors()
+        self.logger.info("Disconnecting from the mount")
+        self.mountDisconnect()
 
     def powercycle(self):
         if self.thach:
@@ -2623,11 +2609,11 @@ class CDK700:
     # S increased default timeout to ten minutes due to pokey t2
     # S we can probably set this to be only for t2, but just a quick edit
     # TODO work on real timeout
-    def homeAndPark(self):
+    def homeAndPark(self): # DA - py3 Tested
         self.home()
         self.park()
 
-    def home(self, timeout=600):  # 420.0):
+    def home(self, timeout=600):  # 420.0): DA - py3 Tested
         self.logger.info("Homing Telescope")
 
         # make sure it's not homing in another thread first (JDE 2017-06-09)
@@ -2687,28 +2673,28 @@ class CDK700:
             )
             return True
 
-    def startPWI(self, email=True):
+    def startPWI(self, email=True): # DA - Py3 Tested
         self.send_to_computer('schtasks /Run /TN "Start PWI"')
         time.sleep(10.0)
 
-    def restartPWI(self, email=True):
+    def restartPWI(self, email=True): # DA - py3 Tested
         self.killPWI()
         time.sleep(5.0)
         return self.startPWI(email=email)
 
-    def killPWI(self):
+    def killPWI(self): # DA- py3 Tested
         self.kill_remote_task("PWI.exe")
         return self.kill_remote_task("ComACRServer.exe")
 
     def kill_remote_task(self, taskname):
         return self.send_to_computer("taskkill /IM " + taskname + " /f")
 
-    def reboot_telcom(self):
+    def reboot_telcom(self): # DA - py3 Tested
         return self.send_to_computer(
             "python C:/minerva-control/minerva_library/reboot.py"
         )
 
-    def send_to_win10(self, cmd):
+    def send_to_win10(self, cmd): # DA - py3 Tested
         f = open(
             self.base_directory + "/credentials/authentication.txt", "r"
         )  # acquire password and username for the computer
@@ -2742,7 +2728,7 @@ class CDK700:
 
         return True  # NOTE THIS CODE DOES NOT HANDLE ERRORS (but its we also haven't had any so that's encouraging)
 
-    def send_to_computer(self, cmd):
+    def send_to_computer(self, cmd): # DA - py3 Tested
         if self.win10:
             return self.send_to_win10(cmd)
 
@@ -2822,38 +2808,7 @@ if __name__ == "__main__":
         tunnel = False
 
     telescope = CDK700(config_file, base_directory, tunnel=tunnel)
+    
+    ## For testing functions withing cdk700 class:
+    ## type 'telescope.' followed by the function you want to test/use
     ipdb.set_trace()
-
-''' # using ipdb debugging to test out telescope in meantime
-
-    print(telescope.config_file)
-    while True:
-        print(telescope.logger_name + " test program")
-        print(" a. move to alt az")
-        print(" b. auto focus")
-        print(" c. kill pwi")
-        print(" d. start pwi")
-        print(" e. n/a")
-        print(" f. n/a")
-        print(" x. exit")
-        print("----------------------------")
-        choice = input("choice:")
-
-        if choice == "a":
-            telescope.mountGotoAltAz(45, 45)
-        elif choice == "b":
-            # ipdb.set_trace()
-            telescope.startAutoFocus()  # used to be autoFocus; not sure if still used but still works with this
-        elif choice == "c":
-            telescope.killPWI()
-        elif choice == "d":
-            telescope.startPWI()
-        elif choice == "e":
-            pass
-        elif choice == "f":
-            pass
-        elif choice == "x":  # short way to exit program
-            quit()
-        else:
-            print("invalid choice")
-''' 

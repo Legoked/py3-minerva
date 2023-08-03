@@ -2,12 +2,12 @@ import warnings
 import numpy as np
 from scipy.ndimage import sobel
 import os
-import commands
+import commands #to remove dependency : deprecated
 import pyfits
 import time
 import sys
 from datetime import datetime,timedelta
-import urllib2
+import urllib2 #  to remvove depenndency ; deprecated
 warnings.simplefilter("ignore")
 import Image
 from scipy import fftpack
@@ -24,7 +24,7 @@ def imsub():
     try:
         im2 = np.array(pyfits.getdata(current),dtype=float)
     except:
-        print "Error reading", im2
+        print("Error reading", im2)
         return
 
     hdr2 = pyfits.getheader(current)
@@ -38,14 +38,14 @@ def imsub():
     exp1 = explast
 #    mask = pyfits.getdata('/var/www/cgi-bin/cloudsensor/mask.fits')
 
-    print last, current
+    print(last, current)
     if expcurrent == 0 or explast == 0:
         expcurrent = explast = exp1 = exp2 = 0.00001
-        print "Exposure too short", expcurrent, explast
+        print("Exposure too short", expcurrent, explast)
         #return
 
     if np.mean(im2) < 2000.0 or np.mean(im1) < 2000:
-        print "Mean of too low: %6.1f < 2500.0" % np.mean(im2)
+        print("Mean of too low: %6.1f < 2500.0" % np.mean(im2))
         return
 
     #print exp2,exp1
@@ -88,11 +88,11 @@ def imsub():
 
 def stats():
 
-    print "Calculating image statistics"
+    print("Calculating image statistics")
     try:
         im2 = pyfits.getdata(current)
     except ValueError:
-        print "Error reading image, returning defaults."
+        print("Error reading image, returning defaults.")
         return defaults
 
     hdr2 = pyfits.getheader(current)
@@ -110,7 +110,7 @@ def stats():
 
     if expcurrent == 0 or explast == 0:
         expcurrent = 0.00001
-        print "Exposure too short"
+        print("Exposure too short")
         #return
    
     head = pyfits.getheader(current)
@@ -125,10 +125,10 @@ def stats():
     try:
         olddiffs = np.genfromtxt('/data/images/AllSky/clouds/%s.txt' % datetime.strftime(datetime.utcnow(),format="%Y%m"),dtype=float,invalid_raise=False,usecols=(2))
         alldiffs = np.hstack((newdiff,olddiffs[-3:]))
-        print alldiffs
+        print(alldiffs)
         diffval = np.mean(alldiffs)
     except (TypeError,IOError):
-        print "Error reading old diff values."
+        print("Error reading old diff values.")
         diffval = newdiff
 
     bright = -2.5*np.log10((np.median(im2)-1000.0)/(expcurrent*1090.26**2)) + skyzpt
@@ -192,12 +192,12 @@ def readvals():
     return values
 
 def moonphase(outfile='/var/www/html/moonphase/moon_current.png'):
-    print "Creating moon image."
+    print("Creating moon image.")
     os.system('xplanet -config /var/www/html/moonphase/moon.conf -origin earth -target moon -geometry 200x200 -num_times 1 -transpng %s' % outfile)
     os.system('rsync -az %s bfulton@pydevsba:public_html/cgi-bin/cloudsensor/' % outfile)
 
 def mkplot(input='/data/images/AllSky/clouds/%s.txt' % datetime.strftime(datetime.utcnow(),format="%Y%m"),output='/data/images/AllSky/clouds/plot_current.png'):
-    print "Generating plot"
+    print("Generating plot")
     import matplotlib
     matplotlib.use('Agg')
     import pylab as pl

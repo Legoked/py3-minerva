@@ -21,11 +21,12 @@ import utils
 
 # spectrograph control class, control all spectrograph hardware ..... to follow pep8, must capitalize class names
 class spectrograph:
-	def __init__(self,config, base ='', red=False, directory=None):
+	def __init__(self,config, base ='', red=False, directory=None, tunnel=False):
 		self.lock = threading.Lock()
 		self.si_lock = threading.Lock()
 		self.config_file = config
 		self.base_directory = base
+		self.tunnel = tunnel
 		self.red = red
 		self.load_config()
 		self.logger = utils.setup_logger(self.base_directory,self.night(),self.logger_name)
@@ -53,9 +54,16 @@ class spectrograph:
 	
 		try:
 			config = ConfigObj(self.base_directory + '/config/' + self.config_file)
-			self.ip = config['SERVER_IP']
-			self.port = int(config['SERVER_PORT'])
-			self.camera_port = int(config['CAMERA_PORT'])
+			if self.tunnel:
+				self.ip = 'localhost'
+				self.port = int(config['TUNNEL_SERVER_PORT'])
+				self.camera_port = int(config['TUNNEL_CAMERA_PORT'])
+				self.ssh_port = int(config['TUNNEL_SSH_PORT'])
+			else:
+				self.ip = config['SERVER_IP']
+				self.port = int(config['SERVER_PORT'])
+				self.camera_port = int(config['CAMERA_PORT'])
+				self.ssh_port = int(config['SSH_PORT'])
 			self.logger_name = config['LOGNAME']
 			self.exptypes = {
 				'Template':1,

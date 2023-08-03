@@ -31,9 +31,11 @@ class PduError(Exception):
 
 class pdu:
     class __PduParameters:
-        def __init__(self, config, base):
+        def __init__(self, config, base,tunnel=False):
+            print(tunnel)
             self.config_file = config
             self.base_directory = base
+            self.tunnel= tunnel
             self.load_config()
             self.logger = utils.setup_logger(
                 self.base_directory, self.night, self.logger_name
@@ -42,8 +44,14 @@ class pdu:
         def load_config(self):
             try:
                 configObj = ConfigObj(self.base_directory + "/config/" + self.config_file)
-                self.ip = configObj["IP"]
-                self.port = configObj["PORT"]
+                if self.tunnel:
+                    self.ip = "localhost"
+                    self.port = configObj["TUNNEL_PORT"]
+                else:
+                    self.ip = configObj["IP"]
+                    self.port = configObj["PORT"]
+                print(("loadconfig ", self.ip,self.port,self.tunnel))
+
                 self.logger_name = configObj["LOGNAME"]
                 outlets = configObj["OUTLETS"]
                 self.outlet_names = {}
@@ -78,8 +86,9 @@ class pdu:
                 "%Y%m%d"
             ) 
 
-    def __init__(self, config, base):
-        self.__pdu_params = self.__PduParameters(config, base)
+    def __init__(self, config, base,tunnel=False):
+        print(tunnel)
+        self.__pdu_params = self.__PduParameters(config, base,tunnel=tunnel)
         self.outlets = {}
         # create each outlet and attach it to its appropriate outlet name as a functions
         for cur_outlet_number in self.__pdu_params.outlet_names.keys():
@@ -162,13 +171,14 @@ class pdu:
                 for name, val in varBinds:
                     if name == oid:
                         return str(val).split()
+        print(("snmpGet ", self.__pdu_params.ip,self.__pdu_params.port))
 
     class __PduOutlet:
         def __init__(self, pdu_params, outlet_number, outlet_name, status_function):
             self.__pdu_params = pdu_params
             self.outlet_number = outlet_number
             self.outlet_name = outlet_name
-            self.__all_outlet_status_function = status_function
+            self.__all_outlet_status_function = status_function 
 
         def __call__(self, request=None):
             if request != None:
@@ -179,6 +189,9 @@ class pdu:
             return self.status()
 
         def __snmpSet__(self, oid, val):
+            print(("snmpSet ",self.__pdu_params.ip,self.__pdu_params.port))
+
+            print(("snmpSet ",self.__pdu_params.ip,self.__pdu_params.port))
             (
                 errorIndication,
                 errorStatus,
@@ -191,6 +204,7 @@ class pdu:
                 ),
                 (oid, rfc1902.Integer(str(val))),
             )
+            ipdb.set_trace()
             if errorIndication:
                 raise PduError(errorIndication)
             else:
@@ -206,6 +220,8 @@ class pdu:
                     for name, val in varBinds:
                         if name == oid:
                             return str(val).split()
+            print(("snmpSet end ",self.__pdu_params.ip,self.__pdu_params.port))
+
 
         def on(self):
             #            self.logger.info("ON requested for "+self.outlet_name+

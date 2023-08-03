@@ -24,7 +24,7 @@ import copy
 #Minerva library dependency
 import env
 import aqawan
-import cdk700
+import cdk700 # DA - migrated to PY3
 import imager
 import imager_ascom
 import fau
