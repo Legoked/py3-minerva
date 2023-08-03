@@ -20,13 +20,14 @@ import utils
 
 class imager:
 
-	def __init__(self,config, base ='', thach=False):
+	def __init__(self,config, base ='', thach=False, tunnel=False):
 
 		self.mailsent = False
 		self.lock = threading.Lock()
 		self.config_file = config
 		self.base_directory = base
-                self.thach = thach
+		self.tunnel = tunnel
+		self.thach = thach
 		self.load_config()
 		self.logger = utils.setup_logger(self.base_directory,self.night,self.logger_name)
 		if thach:
@@ -49,8 +50,8 @@ class imager:
 	def load_config(self):
 
 		try:
-                        # common to spectrograph detector and imaging camera
-                        config = ConfigObj(self.base_directory + '/config/' + self.config_file)
+        # common to spectrograph detector and imaging camera
+			config = ConfigObj(self.base_directory + '/config/' + self.config_file)
 			self.ip = config['Setup']['SERVER_IP']
 			try: self.win10 = config['Setup']['WIN10']
 			except: self.win10 = False
@@ -93,7 +94,8 @@ class imager:
 			self.telnum = self.telid[1]
 			self.exptypes = {'Dark' : 0,'Bias' : 0,'SkyFlat' : 1,}
 			self.fau_config = config['Setup']['FAU_CONFIG']
-                        try: self.telescope_config = config['Setup']['TELESCOPE_CONFIG']
+            
+			try: self.telescope_config = config['Setup']['TELESCOPE_CONFIG']
 			except: self.telescope_config = ''
 
 			try: self.PBfilters = config['PBFILTERS']
@@ -116,17 +118,17 @@ class imager:
 
 			# fau
 
-                        if not self.thach:
-                                self.fau = fau.fau(self.fau_config,self.base_directory)
+			if not self.thach:
+				self.fau = fau.fau(self.fau_config,self.base_directory)
 
- 		except:
+		except:
 			print('ERROR accessing config file: ' + self.config_file)
 			sys.exit()
 
-                today = datetime.datetime.utcnow()
-                if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
-                        today = today + datetime.timedelta(days=1)
-                self.night = 'n' + today.strftime('%Y%m%d')
+		today = datetime.datetime.utcnow()
+		if datetime.datetime.now().hour >= 10 and datetime.datetime.now().hour <= 16:
+			today = today + datetime.timedelta(days=1)
+			self.night = 'n' + today.strftime('%Y%m%d')
 
 	#return a socket object connected to the camera server
 	def connect_server(self):
@@ -183,11 +185,12 @@ class imager:
 
 			try:
 				command = msg.split()[0]
-                                if not self.thach:
-                                        data = repr(data).strip("'")
+				if not self.thach:
+					data = repr(data).strip("'")
 #				else:
 #					data = repr(data).strip('"')
 				data_ret = data.split()[0]
+			
 			except:
 				self.logger.error("Error processing server response from " + msg )
 				if self.recover_server(): return self.send(msg,timeout)
@@ -202,57 +205,61 @@ class imager:
 	def cool(self):
 
 		settleTime = 1200
-                oscillationTime = 120.0
+		oscillationTime = 120.0
 
-                self.logger.info('Turning cooler on')
+		self.logger.info('Turning cooler on')
 		self.set_temperature()
 
-                start = datetime.datetime.utcnow()
-                currentTemp = self.get_temperature()
+		start = datetime.datetime.utcnow()
+		currentTemp = self.get_temperature()
 		if currentTemp == 'fail':
 			self.recover()
 			currentTemp = self.get_temperature()
-                if currentTemp == -999.0:
-                        self.logger.warning('The camera failed to connect properly; beginning recovery')
-                        if self.recover(): return self.cool()
+			if currentTemp == -999.0:
+				self.logger.warning('The camera failed to connect properly; beginning recovery')
+			if self.recover(): return self.cool()
 			return False
 
-                elapsedTime = (datetime.datetime.utcnow() - start).total_seconds()
-                lastTimeNotAtTemp = datetime.datetime.utcnow() - datetime.timedelta(seconds=oscillationTime)
-                elapsedTimeAtTemp = oscillationTime
+		elapsedTime = (datetime.datetime.utcnow() - start).total_seconds()
+		lastTimeNotAtTemp = datetime.datetime.utcnow() - datetime.timedelta(seconds=oscillationTime)
+		elapsedTimeAtTemp = oscillationTime
 
 		# Wait for temperature to settle (timeout of 15 minutes)
 #		self.logger.error("***COOLING DISASBLED!!!***")#
 #		return True
 
-                while elapsedTime < settleTime and ((abs(self.setTemp - currentTemp) > self.maxdiff) or elapsedTimeAtTemp < oscillationTime):
-                        self.logger.info('Current temperature (' + str(currentTemp) +
-                                         ') not at setpoint (' + str(self.setTemp) +
-                                         '); waiting for CCD Temperature to stabilize (Elapsed time: '
-                                         + str(elapsedTime) + ' seconds)')
+		while elapsedTime < settleTime and ((abs(self.setTemp - currentTemp) > self.maxdiff) or elapsedTimeAtTemp < oscillationTime):
+			self.logger.info('Current temperature (' 
+		    + str(currentTemp) + ') not at setpoint (' 
+			+ str(self.setTemp) 
+			+ '); waiting for CCD Temperature to stabilize (Elapsed time: ' 
+		    + str(elapsedTime) 
+			+ ' seconds)')
 
 			# has to maintain temp within range for 1 minute
 			if (abs(self.setTemp - currentTemp) > self.maxdiff):
-                                lastTimeNotAtTemp = datetime.datetime.utcnow()
-			elapsedTimeAtTemp = (datetime.datetime.utcnow() - lastTimeNotAtTemp).total_seconds()
+				lastTimeNotAtTemp = datetime.datetime.utcnow()
+				elapsedTimeAtTemp = (datetime.datetime.utcnow() - lastTimeNotAtTemp).total_seconds()
 
-                        time.sleep(10)
+			time.sleep(10)
 			#S update the temperature
-                        currentTemp = self.get_temperature()
+			currentTemp = self.get_temperature()
 			#S check to see if we are actually getting temperatures.
 			if currentTemp == 'fail':
 				self.recover()
 				self.currentTemp = self.get_temperature()
 
-                        elapsedTime = (datetime.datetime.utcnow() - start).total_seconds()
+				elapsedTime = (datetime.datetime.utcnow() - start).total_seconds()
                 # Failed to reach setpoint
-                if (abs(self.setTemp - currentTemp)) > self.maxdiff:
-                        self.logger.error('The camera was unable to reach its setpoint (' +
-                                          str(self.setTemp) + ') in the elapsed time (' +
-                                          str(elapsedTime) + ' seconds)')
-                        return False
+				if (abs(self.setTemp - currentTemp)) > self.maxdiff:
+					self.logger.error('The camera was unable to reach its setpoint (' 
+					+ str(self.setTemp)
+					+ ') in the elapsed time (' 
+					+ str(elapsedTime) 
+					+ ' seconds)')
+				return False
 
-                return True
+		return True
 
 	# ask server to connect to camera
 	def connect_camera(self):
@@ -405,28 +412,28 @@ class imager:
                 cmd = 'get_north_east none'
                 response = self.send(cmd,30)
                 if (response).split()[0] == 'success':
-                        north = float(response.split()[1])
-                        east = float(response.split()[2])
-                        return (north,east)
+                    north = float(response.split()[1])
+                    east = float(response.split()[2])
+                    return (north,east)
                 return (None,None)
 
         def get_tip_tilt(self):
-                cmd = 'get_tip_tilt none'
-                response = self.send(cmd,30)
-                if (response).split()[0] == 'success':
-                        tip = float(response.split()[1])
-                        tilt = float(response.split()[2])
-                        return (tip,tilt)
-                return (None,None)
+			cmd = 'get_tip_tilt none'
+			response = self.send(cmd,30)
+			if (response).split()[0] == 'success':
+				tip = float(response.split()[1])
+				tilt = float(response.split()[2])
+				return (tip,tilt)
+			return (None,None)
 
 	def moveAO(self,north,east):
 		cmd = 'moveAO ' + str(north) + ',' + str(east)
 		response = self.send(cmd,30)
-                if (response).split()[0] == 'success':
-                        if response.split()[1] == 'Limits_Reached':
-                                return 'Limits_Reached'
-                        else:
-                                return True
+		if (response).split()[0] == 'success':
+				if response.split()[1] == 'Limits_Reached':
+					return 'Limits_Reached'
+				else:
+					return True
 		return False
 
 	def homeAO(self):
@@ -621,13 +628,13 @@ class imager:
 		else: return False
 
 	def powercycle(self,downtime=30):
-                if self.thach:
-                        self.pdu.reboot(5)
-                else:
-                        exec('self.pdu[self.camera_pdu_index].' + self.camera_name + '.off()')
-                        time.sleep(downtime)
-                        exec('self.pdu[self.camera_pdu_index].' + self.camera_name + '.on()')
-		        time.sleep(30)
+		if self.thach:
+			self.pdu.reboot(5)
+		else:
+			exec('self.pdu[self.camera_pdu_index].' + self.camera_name + '.off()')
+			time.sleep(downtime)
+			exec('self.pdu[self.camera_pdu_index].' + self.camera_name + '.on()')
+		time.sleep(30)
 
 	# this requires winexe on linux and a registry key on each Windows (7?) machine (apply keys.reg in dependencies folder):
 	def recover_server(self):
@@ -646,8 +653,8 @@ class imager:
 
 		# restart the server
 		time.sleep(10)
-                self.logger.warning('Restarting server')
-                if not self.start_server():
+		self.logger.warning('Restarting server')
+		if not self.start_server():
 			self.logger.error("Failed to start server")
 			return False
 
@@ -662,47 +669,46 @@ class imager:
 
 		# restart the server
 		time.sleep(10)
-                self.logger.warning('Restarting server')
-                if not self.start_server():
+		self.logger.warning('Restarting server')
+		if not self.start_server():
 			self.logger.error("Failed to start server")
 			return False
 
 		return True
-
-        def kill_remote_task(self,taskname):
-                return self.send_to_computer("taskkill /IM " + taskname + " /f")
-        def kill_server(self):
-                return self.kill_remote_task('python.exe')
-
-        def start_server(self):
-                ret_val = self.send_to_computer('schtasks /Run /TN "telcom server"')
+		
+	def kill_remote_task(self,taskname):
+		return self.send_to_computer("taskkill /IM " + taskname + " /f")
+	
+	def kill_server(self):
+		return self.kill_remote_task('python.exe')
+	
+	def start_server(self):
+		ret_val = self.send_to_computer('schtasks /Run /TN "telcom server"')
 		time.sleep(30)
 		return ret_val
 
 	def send_to_win10(self,cmd):
 		f = open(self.base_directory + '/credentials/authentication2.txt','r') # acquire password and username for the computer                      
-                username = f.readline().strip()
-                password = f.readline().strip()
-                f.close()
-
-                out = '' # for logging                                         
-                err = ''
-                cmdstr = "sshpass -p " + "'"+ password+"'" + " ssh " + username + "@" + self.ip + " '" + cmd + "'" # makes the command str                   
-                # example: sshpass -p "PASSWORD" ssh USER@IP 'schtasks /Run /TN "Start PWI"'                                                                 
-                os.system(cmdstr)
-                self.logger.info('cmd=' + cmd + ', out=' + out + ', err=' + err)
-                self.logger.info(cmdstr)
-
-                return True #NOTE THIS CODE DOES NOT HANDLE ERRORS (but we also haven't had any so that's encouraging)                                   
+		username = f.readline().strip()
+		password = f.readline().strip()
+		f.close()
+		out = '' # for logging                                         
+		err = ''
+		cmdstr = "sshpass -p " + "'"+ password+"'" + " ssh " + username + "@" + self.ip + " '" + cmd + "'" # makes the command str                   
+		# example: sshpass -p "PASSWORD" ssh USER@IP 'schtasks /Run /TN "Start PWI"'                                                                 
+		os.system(cmdstr)
+		self.logger.info('cmd=' + cmd + ', out=' + out + ', err=' + err)
+		self.logger.info(cmdstr)
+		return True #NOTE THIS CODE DOES NOT HANDLE ERRORS (but we also haven't had any so that's encouraging)                                   
 
 
-        def send_to_computer(self, cmd):
+	def send_to_computer(self, cmd):
 		if self.win10:
 			return self.send_to_win10(cmd)
 		
 		f = open(self.base_directory + '/credentials/authentication.txt','r')
 		username = f.readline().strip()
-                password = f.readline().strip()
+		password = f.readline().strip()
 		f.close()
 
 #                process = subprocess.Popen(["winexe","-U","HOME/" + username + "%" + password,"//" + self.ip, cmd],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -717,26 +723,31 @@ class imager:
 		self.logger.info('cmd=' + cmd + ', out=' + out + ', err=' + err)
 		self.logger.info(cmdstr)
 
-                if 'NT_STATUS_HOST_UNREACHABLE' in out:
-                        self.logger.error('host not reachable')
-                        mail.send(self.telid + ' is unreachable',
-                                  "Dear Benevolent Humans,\n\n"+
-                                  "I cannot reach " + self.telid + ". Can you please check the power and internet connection?\n\n" +
-                                  "Love,\nMINERVA",level="serious")
-                        return False
-                elif 'NT_STATUS_LOGON_FAILURE' in out:
-                        self.logger.error('Invalid credentials')
-                        mail.send("Invalid credentials for " + self.telid,
-                                  "Dear Benevolent Humans,\n\n"+
-                                  "The credentials in " + self.base_directory +
-                                  '/credentials/authentication.txt (username=' + username +
-                                  ', password=' + password + ') appear to be outdated. Please fix it.\n\n' +
-                                  'Love,\nMINERVA',level="serious")
-                        return False
-                elif 'ERROR: The process' in err:
-                        self.logger.info('Task already dead')
-                        return True
-                return True
+		if 'NT_STATUS_HOST_UNREACHABLE' in out:
+			self.logger.error('host not reachable')
+			mail.send(self.telid 
+	     		+ ' is unreachable', "Dear Benevolent Humans,\n\n"
+				+ "I cannot reach " + self.telid 
+				+ ". Can you please check the power and internet connection?\n\n" 
+				+ "Love,\nMINERVA",level="serious")
+			return False
+		elif 'NT_STATUS_LOGON_FAILURE' in out:
+			self.logger.error('Invalid credentials')
+			mail.send("Invalid credentials for " + self.telid,
+				"Dear Benevolent Humans,\n\n"
+				+ "The credentials in " 
+				+ self.base_directory 
+				+ '/credentials/authentication.txt (username=' 
+				+ username 
+				+ ', password=' 
+				+ password 
+				+ ') appear to be outdated. Please fix it.\n\n' 
+				+ 'Love,\nMINERVA',level="serious")
+			return False
+		elif 'ERROR: The process' in err:
+			self.logger.info('Task already dead')
+			return True
+		return True
 
 	# This function attempts to automatically recover the camera using
 	# increasingly drastic measures. If reconnecting,
@@ -747,26 +758,26 @@ class imager:
 		self.logger.warning('Camera failed, beginning recovery')
 
 		# disconnect and reconnect camera
-                self.disconnect_camera()
+		self.disconnect_camera()
 		time.sleep(5.0)
-                if self.connect_camera():
-                        self.logger.info('Camera recovered by reconnecting')
-                        return True
+		if self.connect_camera():
+			self.logger.info('Camera recovered by reconnecting')
+			return True
 
 #		# power cycle camera (need to disconnect telescope, close PWI first)
 #		self.logger.info('*** camera power cycle disabled due to black box messiness ***')
-                self.logger.warning('Camera failed to recover by reconnecting; power cycling the camera')
-		if self.telescope_config <> '':
+		self.logger.warning('Camera failed to recover by reconnecting; power cycling the camera')
+		if self.telescope_config != '':
 			telescope = cdk700.CDK700(self.telescope_config, self.base_directory)
 			telescope.shutdown()
 			telescope.killPWI()
-                self.powercycle()
-		if self.telescope_config <> '':
+			self.powercycle()
+		if self.telescope_config != '':
 			telescope.startPWI()
 			telescope.initialize()
-                if self.connect_camera():
-                        self.logger.info('Camera recovered by power cycling it')
-                        return True
+			if self.connect_camera():
+				self.logger.info('Camera recovered by power cycling it')
+				return True
 
 		'''
 		# power cycle camera and wait longer?
@@ -819,14 +830,21 @@ class imager:
 if __name__ == '__main__':
 
 	if socket.gethostname() == 'Main':
-        	base_directory = '/home/minerva/minerva-control'
-        	config_file = 'imager_mred.ini'
-        else:
-                base_directory = 'C:/minerva-control/'
-                config_file = 'imager_t' + socket.gethostname()[1] + '.ini'
+		base_directory = '/home/minerva/minerva-control'
+		config_file = 'imager_mred.ini'
+		tunnel = False
+	elif socket.gethostname() == "HIRO":
+		base_directory = "/home/legokid/pyminerva/"
+		config_file = 'imager_mred.ini'
+		tunnel = True
+	else:
+		base_directory = 'C:/minerva-control/'
+		config_file = 'imager_t' + socket.gethostname()[1] + '.ini'
+		tunnel = False
 
 	test_imager = imager(config_file,base_directory)
 	ipdb.set_trace()
+	'''
 	while True:
 		print 'camera_control test program'
 		print ' a. take_image'
@@ -882,3 +900,4 @@ if __name__ == '__main__':
 			test_imager.recover()
 		else:
 			print 'invalid choice'
+	'''
