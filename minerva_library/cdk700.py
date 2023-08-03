@@ -2822,6 +2822,7 @@ if __name__ == "__main__":
         tunnel = False
 
     telescope = CDK700(config_file, base_directory, tunnel=tunnel)
+<<<<<<< Updated upstream
     ipdb.set_trace()
 
 ''' # using ipdb debugging to test out telescope in meantime
@@ -2857,3 +2858,9 @@ if __name__ == "__main__":
         else:
             print("invalid choice")
 ''' 
+=======
+    
+    ## For testing functions within cdk700 class:
+    ## type 'telescope.' followed by the function you want to test/use
+    ipdb.set_trace()
+>>>>>>> Stashed changes

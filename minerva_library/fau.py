@@ -221,5 +221,5 @@ if __name__ == "__main__":
         base_directory = "C:/minerva-control/"
         config_file = "fau_t" + socket.gethostname()[1] + ".ini"
 
-    test_imager = imager(config_file, base_directory)
+    test_fau = fau(config_file, base_directory)
     ipdb.set_trace()
