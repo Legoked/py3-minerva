@@ -186,7 +186,7 @@ class fau:
     # 		res = self.send('get_index none',5).split()
     # 		if res[0] == 'success': return int(res[1])
     # 		else: return -1
-    
+
     def write_header(self, header_info):
         if self.file_name == "":
             self.logger.error("Empty file name")
@@ -221,5 +221,5 @@ if __name__ == "__main__":
         base_directory = "C:/minerva-control/"
         config_file = "fau_t" + socket.gethostname()[1] + ".ini"
 
-    test_imager = imager(config_file, base_directory)
+    test_fau = fau(config_file, base_directory)
     ipdb.set_trace()

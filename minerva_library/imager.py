@@ -28,6 +28,7 @@ class imager:
         self.lock = threading.Lock()
         self.config_file = config
         self.base_directory = base
+        # self.tunnel = tunnel ........... ask JDE if we need tunneling for the imager
         self.thach = thach
         self.load_config()
         self.logger = utils.setup_logger(

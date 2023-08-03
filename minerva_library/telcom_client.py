@@ -106,21 +106,28 @@ class telcom_client:
 		else:
 			return False
 	def setxmlfile(self, filename):
-		if (self.send('setxmlfile '+filename,15)).split()[0] == 'success':
+		if (self.send('setxmlfile '+ filename,15)).split()[0] == 'success':
 			return True
 		else:
 			return False
 	def checkPointingModel(self, filename):
-		if (self.send('checkPointingModel '+filename,15)).split()[0] == 'success':
+		if (self.send('checkPointingModel '+ filename,15)).split()[0] == 'success':
 			return True
 		else:
 			return False
 
 
-if __name__ == '__main__':
-	
-	config_file = 'telcom_client_2.ini'
-	base_d = '/home/minerva/minerva-control'
+if __name__ == '__main__':    
+	if socket.gethostname() == "Main":
+		base_d = '/home/minerva/minerva-control' 
+		config_file = 'telcom_client_2.ini'
+		tunnel = False
+	elif socket.gethostname() == "HIRO":
+		base_directory = "/home/legokid/pyminerva/" # Adding my local hostname
+		config_file = "telescope_1.ini"
+		tunnel = True
+
+	#########################################
 	
 	client = telcom_client(config_file,base_d)
 	if client.restartPWI():
